@@ -15,7 +15,6 @@ from lazydb.lazydb import Db
 import web
 from reloader import PeriodicReloader
 import random
-#from configs.config import SERVER
 
 urls = ('/submit', 'Submit',
         '/', 'Index',
