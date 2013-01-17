@@ -34,6 +34,13 @@ class Index:
         papers = Db('db/openjournal').get('papers')
         return render.index(papers)
 
+class Vote:
+    def GET(self):
+        """Research http://news.ycombinator.com/item?id=1781013 how
+        hacker news voting works and emulate
+        """
+        pass
+
 class Submit:
     def GET(self):
         return render.submit()
