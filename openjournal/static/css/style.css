@@ -1,0 +1,142 @@
+@font-face {
+  font-family: 'icons';
+  src: url('/static/fonts/IcoMoon.eot?#') format('eot'), 
+       url('/static/fonts/IcoMoon.woff') format('woff'), 
+       url('/static/fonts/IcoMoon.ttf') format('truetype'); 
+}
+
+[data-icon]:before {
+  font-family: icons; /* BYO icon font, mapped smartly */
+  content: attr(data-icon);
+  speak: none; /* Not to be trusted, but hey. */
+}
+
+header {
+    /* IE10 Consumer Preview */ 
+    background-image: -ms-linear-gradient(bottom, #E0E0E0 0%, #F9F9F9 100%);
+    
+    /* Mozilla Firefox */ 
+    background-image: -moz-linear-gradient(bottom, #E0E0E0 0%, #F9F9F9 100%);
+    
+    /* Opera */ 
+    background-image: -o-linear-gradient(bottom, #E0E0E0 0%, #F9F9F9 100%);
+    
+    /* Webkit (Safari/Chrome 10) */ 
+    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #E0E0E0), color-stop(1, #F9F9F9));
+    
+    /* Webkit (Chrome 11+) */ 
+    background-image: -webkit-linear-gradient(bottom, #E0E0E0 0%, #F9F9F9 100%);
+    
+    /* W3C Markup, IE10 Release Preview */ 
+    background-image: linear-gradient(to top, #E0E0E0 0%, #F9F9F9 100%);
+
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ccc;
+    
+    -webkit-box-shadow: 0px 1px 10px rgba(50, 50, 50, 0.3);
+    -moz-box-shadow:    0px 1px 10px rgba(50, 50, 50, 0.3);
+    box-shadow:         0px 1px 10px rgba(50, 50, 50, 0.3);
+
+    text-shadow: 1px 1px 1px #fff;
+}
+
+#spacer {
+    height: 75px;
+}
+
+#logo {
+    float: left;
+    margin: 0px 15px;
+    padding: 5px;
+    font-weight: normal;
+    font-size: 1.7em;    
+    font-family: 'Lobster', cursive;
+}
+
+#logo a {
+    text-decoration: none;
+    color: #333;
+}
+
+#searchbar {
+    float: left;
+    margin-left: 25px;
+    margin-top: 11px;
+    margin-bottom: -20px;
+    padding: 0px;
+}
+
+#searchsubmit {
+    margin-top: -9px;
+}
+
+#results-options{
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    background: #829AA8;
+    background: -moz-linear-gradient(#829AA8, #405A6A);
+    background: -webkit-linear-gradient(#829AA8, #405A6A);
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#829aa8', endColorstr='#405a6a')";
+    border: 1px solid #677C89;
+    border-bottom-color: #6B808D;
+    border-radius: 5px 5px 0 0;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.7);
+    margin: 0px 5px;
+    padding: 5px;
+    position: relative;
+    max-width: 1133px;
+    margin: 0 auto;
+}
+
+#results {
+    background-color: #f3f3f3;
+    max-width: 1133px;
+    margin: 0 auto;
+    padding: 5px;
+}
+
+.rounded {
+-moz-border-radius: 5px;
+border-radius: 5px;
+}
+
+.rounded-bottom {
+    -moz-border-radius-topleft: 0px;
+    -moz-border-radius-topright: 0px;
+    border-top-right-radius: 0px;
+    border-top-left-radius: 0px;
+}
+
+hr{
+    height: 0px;
+    padding: 0px;
+    margin-top: 5px;
+    margin-bottom: 8px;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #fff;
+    
+}
+
+.github-container {
+    max-width: 1122px;
+    margin: 0 auto;
+    padding: 10px;
+    font-size: 12px;
+    color: #333;
+    border: 1px solid #E7E7CE;
+    background: #FFFFF6;
+    background: -moz-linear-gradient(#FFFFF6, #FFFDE3);
+    background: -webkit-linear-gradient(#FFFFF6, #FFFDE3);
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#fffff6', endColorstr='#fffde3')";
+}
+
+.justify-icons {
+    position: relative;
+    top: 2px;
+}
+
+.rmv {
+    margin-left: 5px;
+    color: #999;
+}

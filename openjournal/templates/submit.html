@@ -1,0 +1,60 @@
+$def with()
+
+<div id="results-options">Submit</div>
+<form method="POST" action="/submit"
+      class="github-container rounded rounded-bottom">
+  <table style="margin: 0 auto;">
+
+    <tr>
+      <td>PDF Url</td>
+      <td><input class="span5" type="url" name="url" required/></td>
+    </tr>
+    <tr>
+      <td>Title</td>
+      <td><input class="span5" type="text" name="title" required/></td>
+    </tr>
+    <tr>
+      <td>Subtitle</td>
+      <td>
+	<div class="input-append">
+	  <input class="span5" id="appendedInput" size="16"
+		 name="subtitle" type="text">
+	  <span class="add-on">optional</span>
+	</div>
+      </td>
+    </tr>
+    <tr>
+      <td>authors (csv)</td>
+      <td>
+	<input class="span5" size="16"
+	       placeholder="Author Name (email@institution.com) Institution, ..."
+	       name="authors" type="text">
+      </td>
+    </tr>
+    <tr>
+      <td>Submitter email</td>
+      <td>
+	<div class="input-append">
+	  <input class="span5" id="appendedInput" size="16"
+		 name="submitter" type="email">
+	  <span class="add-on">optional</span>
+	</div>
+      </td>
+    </tr>
+    <tr>
+      <td>Year</td>
+      <td>
+	<div class="input-append">
+	  <input class="span2" id="appendedInput" size="16"
+		 min="1800" max="2013" value="" name="year" type="number">
+	  <span class="add-on">optional</span>
+	</div>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td><input type="submit"/
+    </tr>
+  </table>
+</form>
+  

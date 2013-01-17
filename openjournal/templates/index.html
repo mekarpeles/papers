@@ -1,0 +1,53 @@
+$def with (papers)
+
+<div id="results-options">
+  <a style="color: #fff; padding: 5px;" href="#">Top</a>
+  <a style="color: #fff; padding: 5px;" href="#">Newest</a>
+  <a style="color: #fff; padding: 5px;" href="#">Novelty</a>
+  <a style="color: #fff; padding: 5px;" href="#">Most cited</a>
+  <a style="color: #fff; padding: 5px;" href="#">Most commented</a>
+  <a style="color: #fff; padding: 5px;" href="#">Ask</a>
+  <a style="color: #fff; padding: 5px;" href="/submit">Submit</a>
+</div>
+
+<ul id="results">
+  <div style="margin: 0px; margin-bottom: 0px; padding: 10px;
+	      border: 1px solid: #ccc; ">
+    Searching for: 
+    <span class="label" style="background-color: #def; padding: 5px;
+			       margin-left: 10px; margin-right: 5px;
+			       border: 1px solid #cde;">
+      <a href="#">svm <span class="justify-icons rmv" data-icon="&#x21f7;"></span></a>
+    </span>
+    <span class="label" style="background-color: #def; padding: 5px;
+			       margin-right: 5px; border: 1px solid #cde;">
+      <a href="#">machine learning <span class="justify-icons rmv" data-icon="&#x21f7;"></span></a>
+    </span>
+    <span class="label" style="background-color: #def; padding: 5px;
+			       margin-right: 5px; border: 1px solid #cde;">
+      <a href="#">norvig <span class="justify-icons rmv" data-icon="&#x21f7;"></span></a>
+    </span>
+  </div>
+  <hr/>
+
+  $for paper in papers:
+    <li style="border-bottom: 1px solid #eee;  list-style-type: none; margin-bottom: 15px; margin-top: 5px;">
+      <a style="text-decoration: none; position: relative; top: 3px; color: #555;" href="">&#9650</a>
+      <strong><a style="font-size: 15px; position: relative; top: 3px;" href="$paper['url']">$paper['title']</a></strong>
+      <a class="btn-mini" href="#">Follow</a>
+      $#abstract
+      <p style="margin-left: 20px;">
+	Submitted by <a href="/users/mek">mek</a>
+	| <a href="#">$random.randint(1,340) comments</a>,
+	<a href="#">$random.randint(1,60) annotations</a>
+      </p>
+      <ul class="authors">
+	$for author in paper['authors']:
+	$if not loop.last:
+  	  <li style="display: inline; color: #666;">$author['name'], <i>$author['institution']</i></li>;
+	$else:
+  	  <li style="display: inline; color: #666;">$author['name'], <i>$author['institution']</i></li>
+      </ul>
+    </li>
+</ul>
+
