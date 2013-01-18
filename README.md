@@ -20,3 +20,7 @@ OpenJournal was built using a modified version of Waltz running over web.py. The
 
 * Submit articles http://hackerlist.net:1337/submit
 * Contribute a feature
+
+## Todo
+
+Map over all papers and add a 'submission' time field
