@@ -32,12 +32,12 @@ $def with (papers)
 
   $for paper in papers:
     <li style="border-bottom: 1px solid #eee;  list-style-type: none; margin-bottom: 15px; margin-top: 5px;">
-      <a style="text-decoration: none; position: relative; top: 3px; color: #555;" href="">&#9650</a>
+      <a style="text-decoration: none; position: relative; top: 3px; color: #999;" href="/upvote?pid=$(loop.index - 1)">&#9650</a>
       <strong><a style="font-size: 15px; position: relative; top: 3px;" href="$paper['url']">$paper['title']</a></strong>
       <a class="btn-mini" href="#">Follow</a>
       $#abstract
       <p style="margin-left: 20px;">
-	Submitted by <a href="/users/mek">mek</a>
+	$paper['votes'] $('point' if paper['votes'] == 1 else 'points') by <a href="/users/mek">mek</a> 200 years ago
 	| <a href="#">$random.randint(1,340) comments</a>,
 	<a href="#">$random.randint(1,60) annotations</a>
       </p>
