@@ -23,4 +23,9 @@ OpenJournal was built using a modified version of Waltz running over web.py. The
 
 ## Todo
 
-Map over all papers and add a 'submission' time field
+* Map over all papers and add a 'submission' time field
+* Add databasing (other than LazyDB)
+* Implement search over papers (whoosh?)
+* PDF semantic analyzer (decompose into search terms)
+* Network with some schools re: partnerships
+* Additional details at michaelkarpeles.com/#openjournal
