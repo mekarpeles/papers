@@ -1,7 +1,3 @@
-
-import web
-from lazydb.lazydb import Db
-
 #-*- coding: utf-8 -*-
 """
     main.py
@@ -12,42 +8,47 @@ from lazydb.lazydb import Db
     :license: BSD, see LICENSE for more details.
 """
 
-import web
-from reloader import PeriodicReloader
+import waltz
+from waltz import web, track, session, render
+from lazydb.lazydb import Db
 import random
 
 urls = ('/submit', 'Submit',
+        '/item/?', 'Item',
         '/', 'Index',
         '/404', 'NotFound',
         '(.*)', 'NotFound')
 
-
-app = web.application(urls, globals(), autoreload=False)
-
-_globals = {'ctx': web.ctx,
-            'random': random}
-slender  = web.template.render('templates/', globals=_globals)
-render  = web.template.render('templates/', base='base', globals=_globals)
+env = {'random': random}
+sessions = {'logged': False,
+            'uid': -1,
+            'name': ''}
+app = waltz.setup.dancefloor(urls, globals(), env=env, sessions=sessions, autoreload=False)
 
 class Index:
     def GET(self):
         papers = Db('db/openjournal').get('papers')
-        return render.index(papers)
+        return render().index(papers)
 
 class Vote:
-    def GET(self):
+    def GET(self, pid=None):
         """Research http://news.ycombinator.com/item?id=1781013 how
         hacker news voting works and emulate
         """
         pass
 
+class Item:
+    def GET(self, pid=None):
+        pass
+
 class Submit:
     def GET(self):
-        return render.submit()
+        return render().submit()
 
     def POST(self):
-        i = web.input(authors=None, url=None, title=None, year=None, enabled=False,
-                      cite={'mla': '', 'apa': '', 'chicago': ''}, submitter='', subtitle='')
+        i = web.input(authors=None, url=None, title=None, year=None,
+                      enabled=False, submitter='', subtitle='',
+                      cite={'mla': '', 'apa': '', 'chicago': ''})
         if i.authors:
             clean_authors = []
             dirty_authors = i.authors.split(',')
@@ -70,6 +71,4 @@ class NotFound:
         raise web.notfound('')
 
 if __name__ == "__main__":
-    #if SERVER['DEBUG_MODE']:
-    PeriodicReloader()
     app.run()
