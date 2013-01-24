@@ -13,6 +13,7 @@ from waltz import web, track, session, render
 from lazydb.lazydb import Db
 import random
 
+
 urls = ('/submit', 'Submit',
         '/item/([0-9]+)/?', 'Item',
         '/upvote/?', 'Vote',
@@ -26,6 +27,7 @@ sessions = {'logged': False,
             'name': ''}
 app = waltz.setup.dancefloor(urls, globals(), env=env, sessions=sessions, autoreload=False)
 
+JS = lambda msg: "<script type='text/javascript'>alert(\"%s\");</script>" % msg
 db = Db('db/openjournal')
 papers = lambda: db.get('papers')
 
@@ -38,20 +40,23 @@ class Vote:
         """Research http://news.ycombinator.com/item?id=1781013 how
         hacker news voting works and emulate
         """
+        msg = None
         i = web.input(pid=None)
         if i.pid:
             ps = papers()
-            
-            try:
-                ps[int(i.pid)]['votes'] += 1
-                db.put('papers', ps)
-            except IndexError:
-                return "No such items exists to vote on"
-            return render().index(ps)
+            if not session().logged:
+                msg = JS("Must be logged in to vote")
+            else:
+                try:
+                    ps[int(i.pid)]['votes'] += 1
+                    db.put('papers', ps)
+                except IndexError:
+                    return "No such items exists to vote on"
+            return render().index(ps, msg=msg)
 
 class Item:
-    def GET(self, pid=None):
-        if pid:            
+    def GET(self, pid=None):           
+        if pid:
             try:
                 return papers()[int(pid)]
             except IndexError:

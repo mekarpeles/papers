@@ -1,4 +1,4 @@
-$def with (papers)
+$def with (papers, msg="")
 
 <div id="results-options">
   <a style="color: #fff; padding: 5px;" href="#">Top</a>
@@ -51,3 +51,5 @@ $def with (papers)
     </li>
 </ul>
 
+$if msg:
+  $:msg
