@@ -114,7 +114,7 @@ header {
 #results-options .submit {
     background-color: #357;
     padding: 5px;
-    border: 1px solid #579;
+    border: 1px solid #667F97;
 }
 
 #results {
@@ -125,8 +125,8 @@ header {
 }
 
 .rounded {
--moz-border-radius: 5px;
-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
 }
 
 .rounded-bottom {
