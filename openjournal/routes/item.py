@@ -7,11 +7,14 @@ db = Db('db/openjournal')
 
 class Item:
     def GET(self):
-        i = web.input(pid=None)
-        if i.pid:
+        i = web.input(pid=None, comment=None)
+        if i.pid:            
             try:
                 papers = db.get('papers')
                 paper = papers[int(i.pid)]
+                if i.comment:
+                    comment = paper['comments'][int(i.comment)]
+                    return render().comment(i.pid, comment)
                 return render().item(i.pid, paper)
             except IndexError:
                 return "No such item exists, id out of range"
@@ -28,7 +31,7 @@ class Item:
                 papers = db.get('papers') 
                 paper = papers[int(i.pid)]
                 papers[int(i.pid)]['comments'].append(dict(i))
-                db.put('papers', papers)                
+                db.put('papers', papers)
                 return render().item(i.pid, paper)
             except IndexError:
                 return "No such item exists, id out of range"
