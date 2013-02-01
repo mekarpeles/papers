@@ -1,14 +1,17 @@
 from waltz import web, render, session
+from datetime import datetime
 from lazydb.lazydb import Db
 
 JS = lambda msg: "<script type='text/javascript'>alert(\"%s\");</script>" % msg
 db = Db('db/openjournal')
 
 class Item:
-    def GET(self, pid=None):           
-        if pid:
+    def GET(self):
+        i = web.input(pid=None)
+        if i.pid:
             try:
-                return db.get('papers')[int(pid)]
+                paper = db.get('papers')[int(i.pid)]
+                return render().item(paper)
             except IndexError:
                 return "No such item exists, id out of range"
         raise web.seeother('/')
@@ -38,8 +41,9 @@ class Submit:
         return render().submit()
 
     def POST(self):
-        i = web.input(authors=None, url=None, title=None, year=None,
-                      enabled=False, submitter='', subtitle='',
+        i = web.input(authors=None, url=None, title=None, comments=[],
+                      year=None, enabled=False, submitter='',
+                      subtitle='', time=datetime.utcnow(),
                       cite={'mla': '', 'apa': '', 'chicago': ''})
         i.authors = map(parse_author, i.authors.split(','))
 

@@ -6,4 +6,3 @@ class Index:
     def GET(self):
         db = Db('db/openjournal')
         return render().index(db.get('papers'))
-
