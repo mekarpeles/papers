@@ -10,11 +10,36 @@ class Item:
         i = web.input(pid=None)
         if i.pid:
             try:
-                paper = db.get('papers')[int(i.pid)]
-                return render().item(paper)
+                papers = db.get('papers')
+                paper = papers[int(i.pid)]
+                return render().item(i.pid, paper)
             except IndexError:
                 return "No such item exists, id out of range"
         raise web.seeother('/')
+
+    def POST(self):
+        """Organize/sort the comments according to votes, author,
+        time, etc (heuristic)
+        """
+        i = web.input(pid=None, time=datetime.utcnow().ctime(),
+                      comment="", user="Anonymous", votes=0)
+        if i.pid:
+            try:
+                papers = db.get('papers') 
+                paper = papers[int(i.pid)]
+                papers[int(i.pid)]['comments'].append(dict(i))
+                db.put('papers', papers)                
+                return render().item(i.pid, paper)
+            except IndexError:
+                return "No such item exists, id out of range"
+        raise web.seeother('/')        
+
+    @staticmethod
+    def clear(pid):
+        """Clear comments for an item"""
+        papers = db.get('papers')
+        papers[int(pid)]['comments'] = []
+        return db.put('papers', papers)
 
 class Vote:
     def GET(self):

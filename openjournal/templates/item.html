@@ -1,4 +1,4 @@
-$def with(paper)
+$def with(pid, paper)
 
 <div id="results-options">
   <ul>
@@ -13,5 +13,13 @@ $def with(paper)
 </div>
 
 <div id="results">
-  $:paper
+  <h3><a href="$paper['url']">$paper['title']</a></h3>
+  $for comment in paper['comments']:
+    $:comment
+  <form method="POST" action="/item?pid=$pid">
+    <textarea name="comment"></textarea>
+    <div>
+      <input type="submit" value="add comment"/>
+    </div>
+  </form>
 </div>
