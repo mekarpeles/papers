@@ -1,16 +1,6 @@
 $def with (papers, page=1, msg="")
 
-<div id="results-options">
-  <ul>
-    <li><a href="#">Top</a></li>
-    <li><a href="#">Newest</a></li>
-    <li><a href="#">Controversial</a></li>
-    <li><a href="#">Most cited</a></li>
-    <li><a href="#">Most commented</a></li>
-    <li><a href="#">Request Paper</a></li>
-    <li><a class="submit rounded" href="/submit">Submit</a></li>
-  </ul>
-</div>
+$:render.plugins.nav()
 
 <ol id="results">
   <div style="margin: 0px; margin-bottom: 0px; padding: 10px;
