@@ -5,6 +5,11 @@
        url('/static/fonts/IcoMoon.ttf') format('truetype'); 
 }
 
+/* Content Header */
+.cheader {
+    
+}
+
 [data-icon]:before {
   font-family: icons; /* BYO icon font, mapped smartly */
   content: attr(data-icon);
@@ -87,6 +92,29 @@ header {
     position: relative;
     max-width: 1133px;
     margin: 0 auto;
+}
+
+#results-options ul {
+    padding: 0px;
+    margin: 5px;
+    margin-right: 0px
+}
+
+
+#results-options ul li {
+    padding: 5px;
+    list-display-type: none;
+    display: inline;
+}
+
+#results-options ul li a {
+    color: #fff;
+}
+
+#results-options .submit {
+    background-color: #357;
+    padding: 5px;
+    border: 1px solid #579;
 }
 
 #results {
