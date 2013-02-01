@@ -13,10 +13,11 @@ from waltz import web, track, session, render
 import os
 import random
 import routes
+from datetime import datetime
 from lazydb import Db
 
 urls = ('/submit/?', 'routes.item.Submit',
-        '/item/([0-9]+)/?', 'routes.item.Item',
+        '/item/?', 'routes.item.Item',
         '/upvote/?', 'routes.item.Vote',
         '/login/?', 'routes.auth.Login',
         '/logout/?', 'routes.auth.Logout',
@@ -26,7 +27,11 @@ urls = ('/submit/?', 'routes.item.Submit',
         '/?', 'routes.index.Index',
         '(.*)', 'routes.responses.NotFound')
 
-env = {'random': random}
+env = {'random': random,
+       'time': lambda x: web.datestr(\
+        datetime.strptime(x, "%a %b %d %H:%M:%S %Y"),
+        now=datetime.utcnow())
+       }
 sessions = {'logged': False,
             'authattempt': 0,
             'uid': None,
