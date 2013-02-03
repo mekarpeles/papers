@@ -13,12 +13,14 @@ from waltz import web, track, session, render
 import os
 import random
 import routes
-from datetime import datetime
+import datetime
+from utils import str2datetime
 from lazydb import Db
 
-urls = ('/submit/?', 'routes.item.Submit',
+urls = ('/submit/?', 'routes.submit.Submit',
         '/item/?', 'routes.item.Item',
         '/upvote/?', 'routes.item.Vote',
+        '/admin', 'subapps.admin.Edit',
         '/login/?', 'routes.auth.Login',
         '/logout/?', 'routes.auth.Logout',
         '/x/?', 'routes.auth.Register',
@@ -28,9 +30,8 @@ urls = ('/submit/?', 'routes.item.Submit',
         '(.*)', 'routes.responses.NotFound')
 
 env = {'random': random,
-       'time': lambda x: web.datestr(\
-        datetime.strptime(x, "%a %b %d %H:%M:%S %Y"),
-        now=datetime.utcnow())
+       'time': lambda x: web.datestr(str2datetime(x),
+                                     now=datetime.datetime.utcnow())
        }
 sessions = {'logged': False,
             'authattempt': 0,
