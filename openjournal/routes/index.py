@@ -11,7 +11,7 @@ def newest(papers):
                   key=lambda x: str2datetime(x['time']))
 
 def comments(papers):
-    return sorted(papers, reverse=False,
+    return sorted(papers, reverse=True,
                   key=lambda x: len(x['comments']))
 
 class Index:
