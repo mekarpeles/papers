@@ -64,34 +64,3 @@ class Vote:
                     return "No such items exists to vote on"
             return render().index(ps, msg=msg)
 
-class Submit:
-    def GET(self):
-        return render().submit()
-
-    def POST(self):
-        i = web.input(authors=None, url=None, title=None, comments=[],
-                      year=None, enabled=False, submitter='',
-                      subtitle='', time=datetime.utcnow(),
-                      cite={'mla': '', 'apa': '', 'chicago': ''})
-        i.authors = map(parse_author, i.authors.split(','))
-
-        # abstract db out of routes
-        db = Db('db/openjournal')
-        db.append('papers', dict(i))
-        raise web.seeother('/')
-
-    @staticmethod
-    def parse_author(authors):
-        def author(name='', email='', institution=''):
-            return {'name': name,
-                    'email': email,
-                    'institution': institution}
-        
-        if author: 
-            start = author.index(' (')
-            stop = author.index(') ')
-            name = author[:start]
-            email = author[start+2:stop]
-            institution = author[stop+1:]
-            return author(name, email, institution)
-        return author()
