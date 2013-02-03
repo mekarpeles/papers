@@ -7,12 +7,12 @@ $:render.plugins.nav()
   <table style="margin: 0 auto;">
 
     <tr>
-      <td>PDF Url</td>
-      <td><input class="span5" type="url" name="url" required/></td>
-    </tr>
-    <tr>
       <td>Title</td>
       <td><input class="span5" type="text" name="title" required/></td>
+    </tr>
+    <tr>
+      <td>Paper (url)</td>
+      <td><input class="span5" type="url" name="url" required/></td>
     </tr>
     <tr>
       <td>Subtitle</td>
@@ -27,9 +27,12 @@ $:render.plugins.nav()
     <tr>
       <td>authors (csv)</td>
       <td>
-	<input class="span5" size="16"
-	       placeholder="Author Name (email@institution.com) Institution, ..."
-	       name="authors" type="text">
+	<div class="input-append">
+	  <input class="span5" size="16"
+		 placeholder="Author Name (email@institution.com) Institution, ..."
+		 name="authors" type="text">
+	  <span class="add-on">optional</span>
+	</div>
       </td>
     </tr>
     <tr>
