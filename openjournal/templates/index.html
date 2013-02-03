@@ -26,10 +26,10 @@ $:render.plugins.nav()
       </p>
       <ul class="authors">
 	$for author in paper['authors']:
-	$if not loop.last:
-  	  <li style="display: inline; color: #666;">$author['name'], <i>$author['institution']</i></li>;
-	$else:
-  	  <li style="display: inline; color: #666;">$author['name'], <i>$author['institution']</i></li>
+	  $if not loop.last:
+  	    <li style="display: inline; color: #666;">$author['name'], <i>$author['institution']</i></li>;
+	  $else:
+  	    <li style="display: inline; color: #666;">$author['name'], <i>$author['institution']</i></li>
       </ul>
     </li>
 </ol>

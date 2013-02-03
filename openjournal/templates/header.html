@@ -1,0 +1,21 @@
+$def with()
+
+    <header style="position: fixed; z-index: 999; width: 100%;">
+      <h1 id="logo"><a href="/">Open Journal</a></h1>
+      <div style="width: 0px; display: inline; border-right: 1px solid #f9f9f9;
+		  border-left: 1px solid #ccc; float: left; height: 50px;"></div>
+      <form method="post" action="/search" id="searchbar">
+	<input type="text" name="search" style="width: 400px;"
+	       placeholder="Search" />
+	<input id="searchsubmit" type="submit" class="btn"/>
+      </form>
+      <span style="float: right; padding-right: 25px; margin-top: 15px; margin-left: 25px;">
+	$if session.logged:
+	  <img height="20" src="https://secure.gravatar.com/avatar/7ca82283af0b65b163dde4f5f5e3fb41?s=140&amp;d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png" class="rounded" width="20">
+	  <a style="color: #333;" href="#">mek (20)</a>
+	$else:
+	  <a href="/login">sign in</a> or <a href="/register">register</a>
+      </span>
+      <div style="clear: both;"></div>
+    </header>
+    <div id="spacer"></div>
