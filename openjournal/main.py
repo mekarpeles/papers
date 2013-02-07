@@ -35,7 +35,7 @@ env = {'random': random,
        'time': lambda x: web.datestr(str2datetime(x),
                                      now=datetime.datetime.utcnow())
        }
-sessions = {'logged': True,
+sessions = {'logged': False,
             'karma': 0,
             'uid': None,
             'uname': ''}
