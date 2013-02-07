@@ -1,0 +1,14 @@
+$def with(fnid="", err="")
+
+<form method="POST" action="/login" style="margin: 100px auto; width: 300px; border: 1px solid #eee; padding: 30px;">
+  <h3 style="text-align: center; margin-bottom: 20px;">Login</h3>
+  $if err:
+    <div style="background-color: #faa; border: 1 px solid #f55; padding: 10px; margin-bottom: 20px; text-align: center;">$err</div>
+  <label>username: <input type="text" name="username"/></label>
+  <label>Password: <input type="password" name="passwd"/></label>
+  <input type="hidden" name="fnid" value="$fnid"/>
+  <div style="text-align: center;">
+    <input type="submit" value="login"/>
+  </div>
+</form>
+
