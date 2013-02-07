@@ -40,7 +40,7 @@ class Login:
                     loadsession(u)
                     raise web.seeother('/')
             except:
-                pass
+                raise
             err = "Incorrect username or password"
         else:
             err = "Please provide all required fields"

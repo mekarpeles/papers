@@ -9,18 +9,24 @@ class Submit:
         return render().submit()
 
     def POST(self):
+        if not session().logged:
+            raise web.seeother('/register')
+
         i = web.input(authors="", url=None, title=None, comments=[],
                       year=None, enabled=False, subtitle='',
                       time=datetime.utcnow(), votes=0,
                       cite={'mla': '', 'apa': '', 'chicago': ''})
-        if not session().logged:
-            raise web.seeother('/register')
+        db = Db('db/openjournal')
+
+        def next_pid():
+            papers = db.get('papers')
+            return papers[-1]['pid'] + 1 if papers else 0
+
         i.submitter = session()['uname']
         if i.authors:
             i.authors = map(self.parse_author, i.authors.split(','))
 
-        # abstract db out of routes
-        db = Db('db/openjournal')
+        i.pid = next_pid()
         db.append('papers', dict(i))
         raise web.seeother('/')
 

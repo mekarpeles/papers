@@ -15,7 +15,7 @@ $:render.plugins.nav()
 
   $for paper in papers[:30]:
     <li style="border-bottom: 1px solid #eee;  list-style-type: none; margin-bottom: 15px; margin-top: 5px;">
-      $if not session.logged:
+      $if not session.logged or voted(paper['pid']):
         <span style="text-decoration: none; position: relative; top: 1px; color: #999;">&#9640</span>
       $else:
         <a style="text-decoration: none; position: relative; top: 3px; color: #999;" href="/upvote?pid=$(loop.index - 1)">&#9650</a>

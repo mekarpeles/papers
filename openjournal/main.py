@@ -9,7 +9,7 @@
 """
 
 import waltz
-from waltz import web, track, session, render
+from waltz import web, track, session, render, User
 import os
 import random
 import routes
@@ -33,7 +33,8 @@ urls = ('/submit/?', 'routes.submit.Submit',
 
 env = {'random': random,
        'time': lambda x: web.datestr(str2datetime(x),
-                                     now=datetime.datetime.utcnow())
+                                     now=datetime.datetime.utcnow()),
+       'voted': lambda pid: str(pid) in User.get(session()['uname'])['votes'],
        }
 sessions = {'logged': False,
             'karma': 0,
