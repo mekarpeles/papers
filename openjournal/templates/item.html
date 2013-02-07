@@ -1,0 +1,28 @@
+$def with(pid, paper)
+
+$:render.plugins.nav()
+
+<div id="results">
+  <div style="padding: 10px;">
+    <h3><a href="$paper['url']">$paper['title']</a></h3>
+    $for comment in paper['comments']:
+      <div style="padding: 20px 0px;";>
+        <div style="color: #888">
+	  $comment['user'] $time(comment['time']) | <a href="/item?pid=$(pid)&comment=$(loop.index - 1)">link</a>
+	</div>
+	<div style="margin-left: 10px;">
+	  $:comment['comment']
+	  <div>
+	    <a style="color: #000; text-decoration: underline;" href="/item?pid=$(pid)&comment=$(loop.index - 1)">reply</a>
+	  </div>
+	</div>
+      </div>
+
+    <form method="POST" action="/item?pid=$pid">
+      <textarea name="comment"></textarea>
+      <div>
+	<input type="submit" value="add comment"/>
+      </div>
+    </form>
+  </div>
+</div>

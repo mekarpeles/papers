@@ -13,11 +13,14 @@ from waltz import web, track, session, render
 import os
 import random
 import routes
+import datetime
+from utils import str2datetime
 from lazydb import Db
 
-urls = ('/submit/?', 'routes.item.Submit',
-        '/item/([0-9]+)/?', 'routes.item.Item',
+urls = ('/submit/?', 'routes.submit.Submit',
+        '/item/?', 'routes.item.Item',
         '/upvote/?', 'routes.item.Vote',
+        '/admin', 'subapps.admin.Edit',
         '/login/?', 'routes.auth.Login',
         '/register/?', 'routes.auth.Register',
         '/logout/?', 'routes.auth.Logout',
@@ -28,10 +31,14 @@ urls = ('/submit/?', 'routes.item.Submit',
         '/?', 'routes.index.Index',
         '(.*)', 'routes.responses.NotFound')
 
-env = {'random': random}
-sessions = {'logged': False,
-            'uname': '',
-            'karma': 0}
+env = {'random': random,
+       'time': lambda x: web.datestr(str2datetime(x),
+                                     now=datetime.datetime.utcnow())
+       }
+sessions = {'logged': True,
+            'karmat': 0,
+            'uid': None,
+            'uname': ''}
 app = waltz.setup.dancefloor(urls, globals(), env=env, sessions=sessions,
                              db='%s/db/waltz' % os.getcwd(),
                              autoreload=False)
