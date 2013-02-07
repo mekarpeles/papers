@@ -17,12 +17,14 @@ $:render.plugins.nav()
 	  </div>
 	</div>
       </div>
-
-    <form method="POST" action="/item?pid=$pid">
-      <textarea name="comment"></textarea>
-      <div>
-	<input type="submit" value="add comment"/>
-      </div>
-    </form>
+    $if session.logged:
+      <form method="POST" action="/item?pid=$pid">
+	<textarea name="comment"></textarea>
+	<div>
+	  <input type="submit" value="add comment"/>
+	</div>
+      </form>
+    $else:
+      <a href="/login">login</a> or <a href="/register">register</a> to comment.
   </div>
 </div>

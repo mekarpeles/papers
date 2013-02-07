@@ -4,13 +4,18 @@ from lazydb.lazydb import Db
 
 class Submit:
     def GET(self):
+        if not session().logged:
+            raise web.seeother('/register')
         return render().submit()
 
     def POST(self):
         i = web.input(authors="", url=None, title=None, comments=[],
-                      year=None, enabled=False, submitter='',
-                      subtitle='', time=datetime.utcnow(), votes=0,
+                      year=None, enabled=False, subtitle='',
+                      time=datetime.utcnow(), votes=0,
                       cite={'mla': '', 'apa': '', 'chicago': ''})
+        if not session().logged:
+            raise web.seeother('/register')
+        i.submitter = session()['uname']
         if i.authors:
             i.authors = map(self.parse_author, i.authors.split(','))
 
