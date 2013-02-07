@@ -12,15 +12,15 @@ from lazydb import Db
 
 class Item:
     def GET(self):
-        i = web.input(pid=None, comment=None)
-        if i.pid:            
+        i = web.input(pid=None, comment=None)        
+        if i.pid:
             try:
                 db = Db('db/openjournal')
                 papers = db.get('papers')
                 paper = papers[int(i.pid)]
                 if i.comment:
                     comment = paper['comments'][int(i.comment)]
-                    return render().comment(i.pid, comment)
+                    return render().comment(i.pid, i.comment, comment)
                 return render().item(i.pid, paper)
             except IndexError:
                 return "No such item exists, id out of range"
