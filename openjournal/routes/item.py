@@ -8,13 +8,14 @@
 
 from waltz import web, render, session, User
 from datetime import datetime
-from lazydb.lazydb import Db
+from lazydb import Db
 
 class Item:
     def GET(self):
         i = web.input(pid=None, comment=None)
         if i.pid:            
             try:
+                db = Db('db/openjournal')
                 papers = db.get('papers')
                 paper = papers[int(i.pid)]
                 if i.comment:
@@ -28,11 +29,14 @@ class Item:
     def POST(self):
         """Organize/sort the comments according to votes, author,
         time, etc (heuristic)
+
+        XXX Add voting + karma to comments
         """
         i = web.input(pid=None, time=datetime.utcnow().ctime(),
                       comment="", user="Anonymous", votes=0)
         if i.pid:
             try:
+                db = Db('db/openjournal')
                 papers = db.get('papers') 
                 paper = papers[int(i.pid)]
                 papers[int(i.pid)]['comments'].append(dict(i))
@@ -45,6 +49,7 @@ class Item:
     @staticmethod
     def clear(pid):
         """Clear comments for an item"""
+        db = Db('db/openjournal')
         papers = db.get('papers')
         papers[int(pid)]['comments'] = []
         return db.put('papers', papers)
@@ -58,6 +63,9 @@ class Vote:
         must not already exist in user['votes'] set.
 
         XXX Requires accounting + record keeping
+
+        XXX Preserve the web.ctx GET query params to preserve sorting
+        / ordering
         """
         msg = None
         i = web.input(pid=None)
