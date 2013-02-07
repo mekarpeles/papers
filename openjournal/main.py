@@ -19,7 +19,9 @@ urls = ('/submit/?', 'routes.item.Submit',
         '/item/([0-9]+)/?', 'routes.item.Item',
         '/upvote/?', 'routes.item.Vote',
         '/login/?', 'routes.auth.Login',
+        '/register/?', 'routes.auth.Register',
         '/logout/?', 'routes.auth.Logout',
+        '/p/(.*)/?', 'routes.profiles.Profile',
         '/x/?', 'routes.auth.Register',
         '/404/?', 'routes.responses.NotFound',
         '/admin/?', 'routes.admin.Analytics',
@@ -28,9 +30,8 @@ urls = ('/submit/?', 'routes.item.Submit',
 
 env = {'random': random}
 sessions = {'logged': False,
-            'authattempt': 0,
-            'uid': None,
-            'uname': ''}
+            'uname': '',
+            'karma': 0}
 app = waltz.setup.dancefloor(urls, globals(), env=env, sessions=sessions,
                              db='%s/db/waltz' % os.getcwd(),
                              autoreload=False)
