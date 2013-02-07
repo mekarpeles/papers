@@ -34,7 +34,10 @@ $def with (papers, msg="")
 
   $for paper in papers:
     <li style="border-bottom: 1px solid #eee;  list-style-type: none; margin-bottom: 15px; margin-top: 5px;">
-      <a style="text-decoration: none; position: relative; top: 3px; color: #999;" href="/upvote?pid=$(loop.index - 1)">&#9650</a>
+      $if not session.logged:
+        <span style="text-decoration: none; position: relative; top: 1px; color: #999;">&#9640</span>
+      $else:
+        <a style="text-decoration: none; position: relative; top: 3px; color: #999;" href="/upvote?pid=$(loop.index - 1)">&#9650</a>
       <strong><a style="font-size: 15px; position: relative; top: 3px;" href="$paper['url']">$paper['title']</a></strong>
       <a class="btn-mini" href="#">Follow</a>
       $#abstract

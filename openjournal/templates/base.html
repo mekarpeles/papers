@@ -4,7 +4,6 @@ $def with (content, title="openjournal")
 <html>
   <head>
     <title>$title</title>
-    $#<link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css" />
     <link rel="stylesheet" href="/static/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/static/css/style.css" />
     <link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
@@ -20,8 +19,15 @@ $def with (content, title="openjournal")
 	<input id="searchsubmit" type="submit" class="btn"/>
       </form>
       <span style="float: right; padding-right: 25px; margin-top: 15px; margin-left: 25px;">
-	<img height="20" src="https://secure.gravatar.com/avatar/7ca82283af0b65b163dde4f5f5e3fb41?s=140&amp;d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png" class="rounded" width="20">
-	<a style="color: #333;" href="#">mek (20)</a>
+	$if session.logged:
+	  <a style="color: #333; text-decoration: none;"
+	     href="/p/$(session.uname)">
+	    <img height="20" src="https://secure.gravatar.com/avatar/7ca82283af0b65b163dde4f5f5e3fb41?s=140&amp;d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png" class="rounded" width="20">
+	    $session.uname ($session.karma)
+	  </a>
+	  | <a href="/logout">logout</a>
+	$else:
+	  <a href="/login">login</a> or <a href="/register">register</a>
       </span>
       <div style="clear: both;"></div>
     </header>
