@@ -36,7 +36,7 @@ env = {'random': random,
                                      now=datetime.datetime.utcnow())
        }
 sessions = {'logged': True,
-            'karmat': 0,
+            'karma': 0,
             'uid': None,
             'uname': ''}
 app = waltz.setup.dancefloor(urls, globals(), env=env, sessions=sessions,
