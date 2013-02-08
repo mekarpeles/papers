@@ -124,6 +124,13 @@ header {
     padding: 5px;
 }
 
+.result {
+    border-bottom: 1px solid #eee;
+    list-style-type: none;
+    margin-bottom: 15px;
+    margin-top: 5px;
+}
+
 .rounded {
     -moz-border-radius: 5px;
     border-radius: 5px;

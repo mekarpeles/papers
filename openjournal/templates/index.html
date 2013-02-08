@@ -14,13 +14,14 @@ $:render.plugins.nav()
   <hr/>
 
   $for paper in papers[:30]:
-    <li style="border-bottom: 1px solid #eee;  list-style-type: none; margin-bottom: 15px; margin-top: 5px;">
+    <li class="result">
       $if not session.logged:
-        <span style="text-decoration: none; position: relative; top: 1px; color: #999;">&#9640</span>
+        <a style="text-decoration: none; position: relative; top: 1px; color: #999;"
+	   href="#" title="Login to Vote" onclick="if(confirm('Login to Vote') === true) {window.location = '/login';};">&#9640</a>
       $else:
         <a style="text-decoration: none; position: relative; top: 3px; color: #999;" href="/upvote?pid=$(loop.index - 1)">&#9650</a>
       <strong><a style="font-size: 15px; position: relative; top: 3px;" href="$paper['url']">$paper['title']</a></strong>
-      <a class="btn-mini" href="#">Follow</a>
+      $#<a class="btn-mini" href="#">Follow</a>
       $#abstract
       <p style="margin-left: 20px;">
 	$paper['votes'] $('point' if paper['votes'] == 1 else 'points') by <a href="/users/mek">mek</a> $time(paper['time'])
