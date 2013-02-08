@@ -9,6 +9,7 @@
 from waltz import web, render, session, User
 from datetime import datetime
 from lazydb import Db
+from utils import record_vote, canvote
 
 class Item:
     def GET(self):
@@ -87,19 +88,9 @@ class Vote:
                 ps[int(i.pid)]['votes'] += 1
                 db.put('papers', ps)
                 submitter_uname = ps[int(i.pid)]['submitter']
-                submitter = User.get(submitter_uname)
-                submitter['karma'] +=1
-                User.replace(submitter_uname, submitter)
-                record_vote(u, i.pid)
+                record_vote(u['username'], submitter_uname, i.pid)
             except IndexError:
                 return "No such items exists to vote on"
         return render().index(ps, msg=msg)
 
-def canvote(u, pid):
-    return pid not in u['votes']
 
-def record_vote(u, pid, cid=None):
-    def inc_vote(user):
-        user['votes'].append(pid)
-        return user
-    return User.update(u['username'], func=inc_vote)

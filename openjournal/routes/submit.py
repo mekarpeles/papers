@@ -1,6 +1,7 @@
-from waltz import web, render, session
+from waltz import web, render, session, User
 from datetime import datetime
 from lazydb.lazydb import Db
+from utils import record_vote
 
 class Submit:
     def GET(self):
@@ -27,6 +28,7 @@ class Submit:
             i.authors = map(self.parse_author, i.authors.split(','))
 
         i.pid = next_pid()
+        record_vote(i.submitter, i.submitter, str(i.pid))
         db.append('papers', dict(i))
         raise web.seeother('/')
 
@@ -38,6 +40,8 @@ class Submit:
                     'institution': institution}
         
         if author: 
+            if author[-1] == ')': author += ' '
+            author = author.replace('(),', '() ,')
             start = author.index(' (')
             stop = author.index(') ')
             name = author[:start]
