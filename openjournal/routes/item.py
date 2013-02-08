@@ -9,18 +9,20 @@
 from waltz import web, render, session, User
 from datetime import datetime
 from lazydb import Db
-from utils import record_vote, canvote
+from utils import record_vote, record_comment, canvote
 
 class Item:
     def GET(self):
-        i = web.input(pid=None, comment=None)        
+        i = web.input(pid=None, cid=None)
         if i.pid:
             try:
                 db = Db('db/openjournal')
                 papers = db.get('papers')
                 paper = papers[int(i.pid)]
-                if i.comment:
-                    comment = paper['comments'][int(i.comment)]
+                if i.cid:
+                    # XXX Revise to get comment with cid == i.cid, not
+                    # i.cid'th element
+                    comment = paper['comments'][int(i.cid)]
                     return render().comment(i.pid, i.comment, comment)
                 return render().item(i.pid, paper)
             except IndexError:
@@ -30,18 +32,22 @@ class Item:
     def POST(self):
         """Organize/sort the comments according to votes, author,
         time, etc (heuristic)
-
-        XXX Add voting + karma to comments
         """
         i = web.input(pid=None, time=datetime.utcnow().ctime(),
-                      comment="", user="Anonymous", votes=0)
+                      comment="", user=session()['uname'], votes=0,
+                      enabled=True, cid='0')
         if i.pid:
+            if not session().logged:
+                raise web.seeother('/login?redir=/item=?pid=%s' % i.pid)
             try:
                 db = Db('db/openjournal')
                 papers = db.get('papers') 
-                paper = papers[int(i.pid)]
+                paper = papers[int(i.pid)] #XXX get by key 'pid' instead
+                
+                if paper['comments']: i.cid = paper['comments'][-1]['cid']
                 papers[int(i.pid)]['comments'].append(dict(i))
                 db.put('papers', papers)
+                record_comment(i.user, i.pid, i.cid)
                 return render().item(i.pid, paper)
             except IndexError:
                 return "No such item exists, id out of range"
@@ -79,7 +85,6 @@ class Vote:
 
         if not session().logged:
             raise web.seeother('/register')
-
         db = Db('db/openjournal')
         ps = db.get('papers')
         u = User.get(session()['uname'])

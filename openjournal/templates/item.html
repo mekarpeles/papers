@@ -8,7 +8,8 @@ $:render.plugins.nav()
     $for comment in paper['comments']:
       <div style="padding: 20px 0px;";>
         <div style="color: #888">
-	  $(comment['user']) $time(comment['time']) | <a href="/item?pid=$(pid)&comment=$(loop.index - 1)">link</a>
+	  <a href="/users/$comment['username']">$comment['username']</a>
+	  $time(comment['time']) | <a href="/item?pid=$(pid)&comment=$(loop.index - 1)">link</a>
 	</div>
 	<div style="margin-left: 10px;">
 	  $:comment['comment']
