@@ -34,7 +34,7 @@ class Item:
         time, etc (heuristic)
         """
         i = web.input(pid=None, time=datetime.utcnow().ctime(),
-                      comment="", user=session()['uname'], votes=0,
+                      comment="", username=session()['uname'], votes=0,
                       enabled=True, cid='0')
         if i.pid:
             if not session().logged:
@@ -47,7 +47,7 @@ class Item:
                 if paper['comments']: i.cid = paper['comments'][-1]['cid']
                 papers[int(i.pid)]['comments'].append(dict(i))
                 db.put('papers', papers)
-                record_comment(i.user, i.pid, i.cid)
+                record_comment(i.username, i.pid, i.cid)
                 return render().item(i.pid, paper)
             except IndexError:
                 return "No such item exists, id out of range"
