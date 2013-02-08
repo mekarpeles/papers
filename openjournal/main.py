@@ -20,6 +20,7 @@ from lazydb import Db
 urls = ('/submit/?', 'routes.submit.Submit',
         '/item/?', 'routes.item.Item',
         '/upvote/?', 'routes.item.Vote',
+        '/search/?', 'routes.search.Search',
         '/admin', 'subapps.admin.Edit',
         '/login/?', 'routes.auth.Login',
         '/register/?', 'routes.auth.Register',
