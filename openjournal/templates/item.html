@@ -8,7 +8,7 @@ $:render.plugins.nav()
     $for comment in paper['comments']:
       <div style="padding: 20px 0px;";>
         <div style="color: #888">
-	  $comment['user'] $time(comment['time']) | <a href="/item?pid=$(pid)&comment=$(loop.index - 1)">link</a>
+	  $(comment['user']) $time(comment['time']) | <a href="/item?pid=$(pid)&comment=$(loop.index - 1)">link</a>
 	</div>
 	<div style="margin-left: 10px;">
 	  $:comment['comment']
@@ -17,12 +17,14 @@ $:render.plugins.nav()
 	  </div>
 	</div>
       </div>
-
-    <form method="POST" action="/item?pid=$pid">
-      <textarea name="comment"></textarea>
-      <div>
-	<input type="submit" value="add comment"/>
-      </div>
-    </form>
+    $if session.logged:
+      <form method="POST" action="/item?pid=$pid">
+	<textarea name="comment"></textarea>
+	<div>
+	  <input type="submit" value="add comment"/>
+	</div>
+      </form>
+    $else:
+      <a href="/login">login</a> or <a href="/register">register</a> to comment.
   </div>
 </div>

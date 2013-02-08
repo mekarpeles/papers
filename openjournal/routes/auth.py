@@ -18,7 +18,6 @@ username_err = "Please make sure your username is at least %s " \
 def loadsession(u):
     """Constructs a dict of session variables for user u"""
     session().update({'logged': True,
-                      'karma': u['karma'],
                       'uname': u['username'],
                       'email': u['email'],
                       'created': u['created'],
@@ -40,7 +39,7 @@ class Login:
                     loadsession(u)
                     raise web.seeother('/')
             except:
-                pass
+                raise
             err = "Incorrect username or password"
         else:
             err = "Please provide all required fields"
@@ -65,6 +64,15 @@ class Register:
         if i.username and i.passwd:            
             if re.match(username_regex, i.username):
                 if re.match(passwd_regex, i.passwd):
+                    try:
+                        # treat as login if creds are right
+                        u = User.get(i.username)
+                        if User.easyauth(u, i.passwd):
+                            loadsession(u)
+                            raise web.seeother('/')
+                    except:
+                        pass
+
                     try:
                         u = User.register(i.username, i.passwd,
                                           **defusr())

@@ -9,7 +9,7 @@
 """
 
 import waltz
-from waltz import web, track, session, render
+from waltz import web, track, session, render, User
 import os
 import random
 import routes
@@ -24,7 +24,7 @@ urls = ('/submit/?', 'routes.submit.Submit',
         '/login/?', 'routes.auth.Login',
         '/register/?', 'routes.auth.Register',
         '/logout/?', 'routes.auth.Logout',
-        '/p/(.*)/?', 'routes.profiles.Profile',
+        '/users/(.*)/?', 'routes.profiles.Profile',
         '/x/?', 'routes.auth.Register',
         '/404/?', 'routes.responses.NotFound',
         '/admin/?', 'routes.admin.Analytics',
@@ -33,10 +33,12 @@ urls = ('/submit/?', 'routes.submit.Submit',
 
 env = {'random': random,
        'time': lambda x: web.datestr(str2datetime(x),
-                                     now=datetime.datetime.utcnow())
+                                     now=datetime.datetime.utcnow()),
+       'karma': lambda: User.get(session()['uname'])['karma'],
+       'voted': lambda pid: str(pid) in \
+           User.get(session()['uname'])['votes'],
        }
 sessions = {'logged': False,
-            'karma': 0,
             'uid': None,
             'uname': ''}
 app = waltz.setup.dancefloor(urls, globals(), env=env, sessions=sessions,
