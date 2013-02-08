@@ -1,3 +1,56 @@
 $def with (user)
 
-$user
+<div id="results">
+  <h1>$user['username']</h1>
+
+  $#session.logged and session.uname == user['username']:
+  $if False: 
+    <form method="POST" action="/users/$(session.uname)">
+      <table>
+	<thead></thead>
+	<tbody>
+	  <tr>
+	    <td>bio</td>
+	    <td><textarea name="bio"></textarea></td>
+	  </tr>
+	</tbody>
+      </table>
+    </form>
+
+  $else:
+    <table>
+      <thead></thead>
+      <tbody>
+	<tr>
+	  <td>Created</td>
+	  <td>$user['created']</td>
+	</tr>
+	<tr>
+	  <td>Karma</td>
+	  <td>$user['karma']</td>
+	</tr>
+	<tr>
+	  <td>Bio</td>
+	  <td>$user['bio']</td>
+	</tr>
+	<tr>
+	  <td>Post</td>
+	  <td>
+	    <ul>
+  	      $for post in user['posts']:
+	        <li>$post</li>
+	    </ul>
+	  </td>
+	</tr>
+	<tr>
+	  <td>Comments</td>
+	  <td>
+	    <ul>
+	      $for comment in user['comments']:
+	        <li>$comment</li>
+	    </ul>
+	  </td>
+	</tr>
+      </tbody>
+    </table>
+</div>
