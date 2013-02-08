@@ -1,5 +1,6 @@
 from datetime import datetime
-from waltz import User # should be moved elsewhere
+from waltz import User
+ # should be moved elsewhere
 
 def str2datetime(s, fmt="%a %b %d %H:%M:%S %Y"):
     """Converts str timestamp to datetime"""
@@ -18,3 +19,20 @@ def record_vote(yourname, submitter_name, pid, cid=None):
     submitter['karma'] +=1
     User.replace(submitter_name, submitter)
     return User.update(yourname, func=inc_vote)
+
+def record_submission(submitter_name, pid):
+    """Move to openjoural specific user api.
+    Pushes pid onto user's posts set
+    """
+    u = User.get(submitter_name)
+    u['posts'].append(pid)
+    return User.replace(submitter_name, u)
+
+def record_comment(commenter_name, pid, cid):
+    """XXX add karma to comment voting later
+    - you get 1 karma for commenting
+    """
+    u = User.get(commenter_name)
+    u['comments'].append((pid, cid))
+    return User.replace(commenter_name, u)
+    
