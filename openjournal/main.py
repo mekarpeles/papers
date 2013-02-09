@@ -36,11 +36,10 @@ env = {'random': random,
        'time': lambda x: web.datestr(str2datetime(x),
                                      now=datetime.datetime.utcnow()),
        'karma': lambda: User.get(session()['uname'])['karma'],
-       'voted': lambda pid: str(pid) in \
+       'voted': lambda pid: int(pid) in \
            User.get(session()['uname'])['votes'],
        }
 sessions = {'logged': False,
-            'uid': None,
             'uname': ''}
 app = waltz.setup.dancefloor(urls, globals(), env=env, sessions=sessions,
                              db='%s/db/waltz' % os.getcwd(),
