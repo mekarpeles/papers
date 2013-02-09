@@ -15,15 +15,19 @@ class Item:
     def GET(self):
         i = web.input(pid=None, cid=None)
         if i.pid:
+            i.pid = int(i.pid)
             try:
                 db = Db('db/openjournal')
                 papers = db.get('papers')
-                paper = papers[int(i.pid)]
+                paper = papers[i.pid]
                 if i.cid:
-                    # XXX Revise to get comment with cid == i.cid, not
-                    # i.cid'th element
-                    comment = paper['comments'][int(i.cid)]
-                    return render().comment(i.pid, i.comment, comment)
+                    i.cid = int(i.cid)
+                    # XXX Revise data storage scheme s.t. comment can
+                    # be retrieved by cid pkey, not i.cid'th index (below)
+                    # reason: cnnt can be deleted and lead to consistency
+                    # errors (id would then reference wrong entity)
+                    comment = paper['comments'][i.cid]
+                    return render().comment(i.pid, i.cid, comment)
                 return render().item(i.pid, paper)
             except IndexError:
                 return "No such item exists, id out of range"
@@ -35,17 +39,19 @@ class Item:
         """
         i = web.input(pid=None, time=datetime.utcnow().ctime(),
                       comment="", username=session()['uname'], votes=0,
-                      enabled=True, cid='0')
+                      enabled=True)
         if i.pid:
+            i.pid = int(i.pid)
+            i.cid = 0
             if not session().logged:
                 raise web.seeother('/login?redir=/item=?pid=%s' % i.pid)
             try:
                 db = Db('db/openjournal')
-                papers = db.get('papers') 
-                paper = papers[int(i.pid)] #XXX get by key 'pid' instead
-                
-                if paper['comments']: i.cid = paper['comments'][-1]['cid']
-                papers[int(i.pid)]['comments'].append(dict(i))
+                papers = db.get('papers')                 
+                paper = papers[i.pid] #XXX get by key 'pid' instead
+                if paper['comments']:
+                    i.cid = paper['comments'][-1]['cid'] + 1
+                papers[i.pid]['comments'].append(dict(i))
                 db.put('papers', papers)
                 record_comment(i.username, i.pid, i.cid)
                 return render().item(i.pid, paper)
@@ -58,7 +64,7 @@ class Item:
         """Clear comments for an item"""
         db = Db('db/openjournal')
         papers = db.get('papers')
-        papers[int(pid)]['comments'] = []
+        papers[pid]['comments'] = []
         return db.put('papers', papers)
 
 class Vote:
@@ -81,21 +87,22 @@ class Vote:
           (and or comment id [cid], if it exists)
         """
         msg = None
-        i = web.input(pid=None)
-
+        i = web.input(pid=None, sort="popular")
+        
         if not session().logged:
             raise web.seeother('/register')
         db = Db('db/openjournal')
         ps = db.get('papers')
         u = User.get(session()['uname'])
-        if i.pid and canvote(u, i.pid):
-            try:
-                ps[int(i.pid)]['votes'] += 1
-                db.put('papers', ps)
-                submitter_uname = ps[int(i.pid)]['submitter']
-                record_vote(u['username'], submitter_uname, i.pid)
-            except IndexError:
-                return "No such items exists to vote on"
-        return render().index(ps, msg=msg)
-
+        if i.pid:
+            i.pid = int(i.pid)
+            if canvote(u, i.pid):
+                try:
+                    ps[i.pid]['votes'] += 1
+                    db.put('papers', ps)
+                    submitter_uname = ps[i.pid]['submitter']
+                    record_vote(u['username'], submitter_uname, i.pid)
+                except IndexError:
+                    return "No such items exists to vote on"
+        raise web.seeother('/?sort=%s' % i.sort)
 

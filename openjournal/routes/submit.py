@@ -15,7 +15,7 @@ class Submit:
 
         i = web.input(authors="", url=None, title=None, comments=[],
                       year=None, enabled=False, subtitle='',
-                      time=datetime.utcnow(), votes=0,
+                      time=datetime.utcnow(), votes=1,
                       cite={'mla': '', 'apa': '', 'chicago': ''})
         db = Db('db/openjournal')
 
@@ -28,8 +28,8 @@ class Submit:
             i.authors = map(self.parse_author, i.authors.split(','))
 
         i.pid = next_pid()
-        record_submission(i.submitter, str(i.pid))
-        record_vote(i.submitter, i.submitter, str(i.pid))
+        record_submission(i.submitter, i.pid)
+        record_vote(i.submitter, i.submitter, i.pid)
         db.append('papers', dict(i))
         raise web.seeother('/')
 
