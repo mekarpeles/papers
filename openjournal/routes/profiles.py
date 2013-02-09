@@ -4,9 +4,7 @@ class Profile:
     def GET(self, username=""): 
         if username:
             try:
-                user = User.get(username)
-                del user['salt']
-                del user['uhash']
+                user = User.get(username, safe=True)
                 return render().profiles.index(user)
             except:
                 pass
