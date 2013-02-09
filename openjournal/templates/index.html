@@ -1,4 +1,4 @@
-$def with (papers, page=1, msg="")
+$def with (papers, page=1, sort="popular", msg="")
 
 $:render.plugins.nav()
 
@@ -19,18 +19,17 @@ $:render.plugins.nav()
         <a style="text-decoration: none; position: relative;
 		  top: 1px; color: #999;" href="#"   
 	   $if not session.logged:
-	     title="Login to Vote" onclick="if(confirm('Login to Vote') === true) {window.location = '/login';};">
+	     title="Login to Vote" onclick="if(confirm('Login to Vote') === true) {window.location = '/login?redir=/upvote?pid=$(loop.index - 1)&sort=$sort';};">
 	   $else:
 	     title="$(session.uname), you already upvoted this">
 	   &#9640</a>	   
       $else:
-        <a style="text-decoration: none; position: relative; top: 3px; color: #999;" href="/upvote?pid=$(loop.index - 1)">&#9650</a>
+        <a style="text-decoration: none; position: relative; top: 3px; color: #999;" href="/upvote?pid=$(loop.index-1)&sort=$sort">&#9650</a>
       <strong><a style="font-size: 15px; position: relative; top: 3px;" href="$paper['url']">$paper['title']</a></strong>
       $#<a class="btn-mini" href="#">Follow</a>
       <p style="margin-left: 20px;">
 	$paper['votes'] $('point' if paper['votes'] == 1 else 'points') by <a href="/users/$(paper['submitter'])">$(paper['submitter'])</a> $time(paper['time'])
-	| <a href="/item?pid=$(loop.index - 1)">$('%s comments' % len(paper["comments"]) if len(paper["comments"]) else 'discuss')</a>
-
+	| <a href="/item?pid=$(loop.index-1)">$('%s comments' % len(paper["comments"]) if len(paper["comments"]) else 'discuss')</a>
       </p>
       <ul class="authors">
 	$for author in paper['authors']:
