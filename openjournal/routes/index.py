@@ -1,10 +1,12 @@
 from waltz import web, track, session, render
 from lazydb.lazydb import Db
 from datetime import datetime
-from utils import str2datetime
+from utils import str2datetime, decayscore, minutes_since
 
 def popular(papers):
-    return sorted(papers, key=lambda x: int(x['votes']),
+    def rank(paper):
+        return decayscore(paper['votes'], minutes_since(paper['time']))
+    return sorted(papers, key=lambda paper: rank(paper),
                   reverse=True)
 def newest(papers):
     return sorted(papers, reverse=True,
@@ -21,6 +23,7 @@ class Index:
         i = web.input(sort="popular", limit=30)
         db = Db('db/openjournal')
         papers = db.get('papers')
+
         try:
             papers = globals()[i.sort](papers)
         except:

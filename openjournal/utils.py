@@ -2,10 +2,20 @@ from datetime import datetime
 from waltz import User
  # should be moved elsewhere
 
+def decayscore(score, t):
+    """http://www.seomoz.org/blog/reddit-stumbleupon-delicious-and-hacker-news-algorithms-exposed
+    convert time to: hours since submission
+    """
+    return pow((score - 1) / (t + 2), 1.5)
+
 def str2datetime(s, fmt="%a %b %d %H:%M:%S %Y"):
     """Converts str timestamp to datetime"""
     return s if type(s) is datetime else \
         datetime.strptime(s, fmt)
+
+def minutes_since(s, now=datetime.utcnow(),
+                 fmt="%a %b %d %H:%M:%S %Y"):
+    return (now - str2datetime(s)).seconds / 60.0
 
 def canvote(u, pid):
     return pid not in u['votes']
