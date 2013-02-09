@@ -28,5 +28,5 @@ class Index:
             papers = globals()[i.sort](papers)
         except:
             papers = popular(papers)
-        return render().index(papers[:i.limit])
+        return render().index(papers[:i.limit], sort=i.sort)
 
