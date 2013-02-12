@@ -42,7 +42,8 @@ class Item:
                       enabled=True)
         if i.pid:
             i.pid = int(i.pid)
-            i.cid = 0
+            i.cid = 0 #sets default cid val if first comment
+
             if not session().logged:
                 raise web.seeother('/login?redir=/item=?pid=%s' % i.pid)
             try:
