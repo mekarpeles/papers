@@ -9,7 +9,7 @@ $:render.plugins.nav()
 	<a href="/users/$comment['username']">$comment['username']</a> $time(comment['time']) | <a href="/item?pid=$(pid)&comment=$(cid)">link</a>
       </div>
       <div style="margin-left: 10px;">
-	$:comment['comment']
+	$:linkify(comment['comment'])
       </div>
     </div>
     <form method="POST" action="/item?pid=$pid">
