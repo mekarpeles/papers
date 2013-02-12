@@ -3,16 +3,6 @@ $def with (papers, page=1, sort="popular", msg="")
 $:render.plugins.nav()
 
 <ol id="results">
-  <div style="margin: 0px; margin-bottom: 0px; padding: 10px;
-	      border: 1px solid: #ccc; ">
-    Searching for: 
-    <span class="label" style="background-color: #def; padding: 5px;
-			       margin-right: 5px; border: 1px solid #cde;">
-      <a href="#">search coming soon <span class="justify-icons rmv" data-icon="&#x21f7;"></span></a>
-    </span>
-  </div>
-  <hr/>
-
   $for paper in papers[:30]:
     <li class="result">
       $:render.paper(paper, sort)

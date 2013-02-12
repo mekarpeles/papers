@@ -1,8 +1,17 @@
-$def with (results)
+$def with (q, results)
 
 $:render.plugins.nav()
 
 <div id="results">
+  <div style="margin: 0px; margin-bottom: 0px; padding: 10px;
+	      border: 1px solid: #ccc; ">
+    Searching for:     
+    <span class="label" style="background-color: #def; padding: 5px;
+			       margin-right: 5px; border: 1px solid #cde;">
+      <a href="#">$q <span class="justify-icons rmv" data-icon="&#x21f7;"></span></a>
+    </span>
+  </div>
+  <hr/>
   <div style="padding: 10px;">
     $if not results:
       <h2>No results found</h2>
