@@ -4,6 +4,8 @@ $:render.plugins.nav()
 
 <div id="results">
   <div style="padding: 10px;">
+    $if not results:
+      <h2>No results found</h2>
     $for paper in results:
       $:render.paper(paper)
   </div>
