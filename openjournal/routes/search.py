@@ -1,5 +1,17 @@
-from waltz import render
+from waltz import render, web
+from api.v1.search import Search as S
+from api.v1.paper import Paper
 
 class Search:
     def GET(self):
-        return render().search()
+        i = web.input(search="")
+        results = []
+        if i.search:
+            papers = Paper.get()
+            matches = S().match(i.search)
+            pids = [int(x['pid']) for x in matches]
+            results = [p for p in papers if p['pid'] in pids]
+        return render().search(results)
+
+    def POST(self):
+        return self.GET()

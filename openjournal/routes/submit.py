@@ -1,6 +1,7 @@
 from waltz import web, render, session, User
 from datetime import datetime
 from lazydb.lazydb import Db
+from api.v1.search import Search
 from utils import record_vote, record_submission
 
 class Submit:
@@ -31,6 +32,7 @@ class Submit:
         record_submission(i.submitter, i.pid)
         record_vote(i.submitter, i.submitter, i.pid)
         db.append('papers', dict(i))
+        Search().index()
         raise web.seeother('/')
 
     @staticmethod
