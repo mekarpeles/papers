@@ -1,11 +1,6 @@
 from datetime import datetime
 import re
 
-r = re.compile(r"(http://[^ ]+)")
-
-def linkify(txt):
-    print r.sub(r'<a href="\1">\1</a>', txt)
-
 def str2datetime(s, fmt="%a %b %d %H:%M:%S %Y"):
     """Converts str timestamp to datetime"""
     return s if type(s) is datetime else \
