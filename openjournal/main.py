@@ -14,7 +14,7 @@ import os
 import random
 import routes
 import datetime
-from utils import str2datetime, linkify
+from utils import str2datetime
 from lazydb import Db
 
 urls = ('/submit/?', 'routes.submit.Submit',
@@ -33,7 +33,6 @@ urls = ('/submit/?', 'routes.submit.Submit',
         '(.*)', 'routes.responses.NotFound')
 
 env = {'random': random,
-       'linkify': linkify,
        'time': lambda x: web.datestr(str2datetime(x),
                                      now=datetime.datetime.utcnow()),
        'karma': lambda: User.get(session()['uname'])['karma'],
