@@ -25,6 +25,7 @@ setup(
     install_requires=[
         'waltz >= 0.1.62',
         'lepl >= 5.1.3',
+        'whoosh >= 2.4.1',
         'pypdf',
         'markdown'
     ],
