@@ -75,6 +75,20 @@ header {
     margin-top: -9px;
 }
 
+#searchresults {
+    margin: 0px;
+    margin-bottom: 0px;
+    padding: 10px;
+    border: 1px solid: #ccc;
+}
+
+.searchresult-tag {
+    background-color: #def;
+    padding: 5px;
+    margin-right: 5px;
+    border: 1px solid #cde;
+}
+
 #results-options{
     color: white;
     font-size: 14px;
@@ -99,7 +113,6 @@ header {
     margin: 5px;
     margin-right: 0px
 }
-
 
 #results-options ul li {
     padding: 5px;
@@ -129,6 +142,44 @@ header {
     list-style-type: none;
     margin-bottom: 15px;
     margin-top: 5px;
+}
+
+.result-title {
+    font-size: 15px;
+    position: relative;
+    top: 3px;
+    font-weight: bold;
+}
+
+.result-meta {
+    margin-left: 20px;
+}
+
+.result-sources {
+    display: inline; color: #666;
+}
+
+.votebox {
+    text-decoration: none;
+    position: relative;
+    top: 2px;
+    color: #999;
+}
+
+a.votebox-inactive:hover {
+    text-decoration: none;
+    color: #222;
+}
+
+a.votebox:hover {
+    text-decoration: none;
+}
+
+.votebox-inactive {
+    text-decoration: none;
+    position: relative;
+    top: 1px;
+    color: #999;
 }
 
 .rounded {

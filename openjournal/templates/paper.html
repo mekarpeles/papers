@@ -2,25 +2,23 @@ $def with (paper, sort="popular")
 
 
       $if not session.logged or voted(paper['pid']):
-        <a style="text-decoration: none; position: relative;
-		  top: 1px; color: #999;" href="#"   
+        <a class="votebox-inactive" href="#"   
 	   $if not session.logged:
 	     title="Login to Vote" onclick="if(confirm('Login to Vote') === true) {window.location = '/login?redir=/upvote?pid=$(paper['pid'])&sort=$sort';};">
 	   $else:
 	     title="$(session.uname), you already upvoted this">
 	   &#9640</a>	   
       $else:
-        <a style="text-decoration: none; position: relative; top: 3px; color: #999;" href="/upvote?pid=$(paper['pid'])&sort=$sort">&#9650</a>
-      <strong><a style="font-size: 15px; position: relative; top: 3px;" href="$paper['url']">$paper['title']</a></strong>
-      $#<a class="btn-mini" href="#">Follow</a>
-      <p style="margin-left: 20px;">
+        <a class="votebox" href="/upvote?pid=$(paper['pid'])&sort=$sort">&#9650</a>
+      <strong><a class="result-title" href="$paper['url']">$paper['title']</a></strong>
+      <p class="result-meta">
 	$paper['votes'] $('point' if paper['votes'] == 1 else 'points') by <a href="/users/$(paper['submitter'])">$(paper['submitter'])</a> $time(paper['time'])
 	| <a href="/item?pid=$(paper['pid'])">$('%s comments' % len(paper["comments"]) if len(paper["comments"]) else 'discuss')</a>
       </p>
       <ul class="authors">
 	$for author in paper['authors']:
 	  $if not loop.last:
-  	    <li style="display: inline; color: #666;">$author['name'], <i>$author['institution']</i></li>;
+  	    <li class="result-sources">$author['name'], <i>$author['institution']</i></li>;
 	  $else:
-  	    <li style="display: inline; color: #666;">$author['name'], <i>$author['institution']</i></li>
+  	    <li class="result-sources">$author['name'], <i>$author['institution']</i></li>
       </ul>
