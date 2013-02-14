@@ -13,7 +13,7 @@ $:render.plugins.nav()
 	  $time(comment['time']) | <a href="/item?pid=$(pid)&comment=$(loop.index - 1)">link</a>
 	</div>
 	<div style="margin-left: 10px;">
-	  $:linkify(comment['comment'])
+	  $(comment['comment'])
 	  <div>
 	    <a style="color: #000; text-decoration: underline;" href="/item?pid=$(pid)&comment=$(loop.index - 1)">reply</a>
 	  </div>
