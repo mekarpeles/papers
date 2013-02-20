@@ -8,6 +8,13 @@ $def with (content, title="openjournal")
     <link rel="stylesheet" href="/static/css/style.css" />
     <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico">
     <link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+
+    $for src in content.get('js', "").split(" "):
+      $if src:
+        <script type="text/javascript" src="$src"></script>
+    $for href in content.get('css', "").split(" "):
+      $if href:
+        <link rel="stylesheet" href="$href" />
   </head>
   <body>
     $:render.header()
