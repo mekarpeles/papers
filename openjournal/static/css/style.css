@@ -1,3 +1,30 @@
+header {
+    position: fixed;
+    z-index: 999;
+    width: 100%;
+}
+
+.searcharea {
+    width: 0px;
+    display: inline;
+    border-right: 1px solid #f9f9f9;
+    border-left: 1px solid #ccc;
+    float: left;
+    height: 50px;
+}
+
+.nav-options {
+    float: right;
+    padding-right: 25px;
+    margin-top: 15px;
+    margin-left: 25px;
+}
+
+.nav-usr {
+    color: #333;
+    text-decoration: none;
+}
+
 @font-face {
   font-family: 'icons';
   src: url('/static/fonts/IcoMoon.eot?#') format('eot'), 
@@ -61,6 +88,10 @@ header {
 #logo a {
     text-decoration: none;
     color: #333;
+}
+
+#search {
+    width: 400px;
 }
 
 #searchbar {
@@ -225,4 +256,8 @@ hr{
 .rmv {
     margin-left: 5px;
     color: #999;
+}
+
+.clearfix {
+    clear: both;
 }

@@ -1,26 +1,26 @@
 $def with()
 
-    <header style="position: fixed; z-index: 999; width: 100%;">
+    <header>
       <h1 id="logo"><a href="/">Open Journal</a></h1>
-      <div style="width: 0px; display: inline; border-right: 1px solid #f9f9f9;
-		  border-left: 1px solid #ccc; float: left; height: 50px;"></div>
+      <div class="searcharea"></div>
       <form method="GET" action="/search" id="searchbar">
-	<input type="text" name="search" style="width: 400px;"
+	<input type="text" name="search" id="search"
 	       placeholder="Search" />
-	<input id="searchsubmit" type="submit" class="btn" value="search"/>
+	<input id="searchsubmit" type="submit"
+	       class="btn" value="search"/>
       </form>
-      <span style="float: right; padding-right: 25px; margin-top: 15px; margin-left: 25px;">
+      <span class="nav-options">
 	$if session.logged:
-	  <a style="color: #333; text-decoration: none;"
-	     href="/users/$(session.uname)">
-	    <img height="20" src="/static/imgs/glider-avatar.png" class="rounded" width="20">
+	  <a class="nav-usr" href="/users/$(session.uname)">
+	    <img height="20" src="/static/imgs/glider-avatar.png"
+		 class="rounded" width="20">
 	    $session.uname ($karma())
 	  </a>
 	  | <a href="/logout">logout</a>
 	$else:
 	  <a href="/login">login</a> or <a href="/register">register</a>
       </span>
-      <div style="clear: both;"></div>
+      <div class="clearfix"></div>
     </header>
     <div id="spacer"></div>
 
