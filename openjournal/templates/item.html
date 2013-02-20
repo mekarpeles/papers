@@ -1,21 +1,23 @@
 $def with(pid, paper)
 
+$var css: /static/css/item.css
+
 $:render.plugins.nav()
 
 <div id="results">
   <div style="padding: 10px;">
     <h3><a href="$paper['url']">$paper['title']</a></h3>
-    <p style="color: #666;">Submitted by <a href="/users/$(paper['submitter'])">$paper['submitter']</a> $time(paper['time'])</p>
+    <p class="item-submitter">Submitted by <a href="/users/$(paper['submitter'])">$paper['submitter']</a> $time(paper['time'])</p>
     $for comment in paper['comments']:
-      <div style="padding: 20px 0px;";>
-        <div style="color: #888">
+      <div class="comment">
+        <div class="comment-meta">
 	  <a href="/users/$comment['username']">$comment['username']</a>
 	  $time(comment['time']) | <a href="/item?pid=$(pid)&comment=$(loop.index - 1)">link</a>
 	</div>
-	<div style="margin-left: 10px;">
+	<div class="comment-body">
 	  $(comment['comment'])
 	  <div>
-	    <a style="color: #000; text-decoration: underline;" href="/item?pid=$(pid)&comment=$(loop.index - 1)">reply</a>
+	    <a class="reply" href="/item?pid=$(pid)&comment=$(loop.index - 1)">reply</a>
 	  </div>
 	</div>
       </div>
