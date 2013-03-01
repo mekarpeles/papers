@@ -9,18 +9,22 @@ $:render.plugins.nav()
     <h3><a href="$paper['url']">$paper['title']</a></h3>
     <p class="item-submitter">Submitted by <a href="/users/$(paper['submitter'])">$paper['submitter']</a> $time(paper['time'])</p>
     $for comment in paper['comments']:
-      <div class="comment">
-        <div class="comment-meta">
-	  <a href="/users/$comment['username']">$comment['username']</a>
-	  $time(comment['time']) | <a href="/item?pid=$(pid)&comment=$(loop.index - 1)">link</a>
-	</div>
-	<div class="comment-body">
-	  $(comment['comment'])
-	  <div>
-	    <a class="reply" href="/item?pid=$(pid)&comment=$(loop.index - 1)">reply</a>
+      $if comment['enabled']:
+        <div class="comment">
+          <div class="comment-meta">
+  	    <a href="/users/$comment['username']">$comment['username']</a>
+	    $time(comment['time']) | <a href="/item?pid=$(pid)&cid=$(loop.index - 1)">link</a>
+	  </div>
+	  <div class="comment-body">
+	    $(comment['comment'])
+	    <div>
+	      <a class="reply" href="/item?pid=$(pid)&cid=$(loop.index - 1)">reply</a>
+	      $if comment['username'] == session['uname']:
+	        $# add delete confirmation
+	        <a class="reply" href="/item?pid=$(pid)&cid=$(loop.index - 1)&opt=delete">delete</a>
+	    </div>
 	  </div>
 	</div>
-      </div>
     $if session.logged:
       <form method="POST" action="/item?pid=$pid">
 	<textarea name="comment"></textarea>
