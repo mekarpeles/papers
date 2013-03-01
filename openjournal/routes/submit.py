@@ -69,3 +69,4 @@ class Submit:
                 except IndexError:
                     institution = ' '
                 return self._authorize(name, email, institution)
+        return self._authorize()
