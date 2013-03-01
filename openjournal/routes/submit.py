@@ -28,7 +28,6 @@ class Submit:
         i.submitter = session()['uname']
         if i.authors:
             i.authors = map(self.parse_author, i.authors.split(','))
-            #print i.authors
         i.pid = next_pid()
         record_submission(i.submitter, i.pid)
         record_vote(i.submitter, i.submitter, i.pid)
