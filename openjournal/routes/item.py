@@ -22,7 +22,12 @@ class Item:
                 paper = papers[i.pid]
                 if i.cid:
                     i.cid = int(i.cid)
-                    comment = paper['comments'][i.cid]
+                    try:
+                        comment = paper['comments'][i.cid]
+                    except:
+                        raise web.notfound()
+                    if not comment['enabled']:
+                        raise web.notfound()
                     if i.opt == "delete" and session().logged and \
                             comment['username'] == session()['uname']:
                         paper['comments'][i.cid]['enabled'] = False

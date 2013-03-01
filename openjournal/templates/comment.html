@@ -9,8 +9,12 @@ $:render.plugins.nav()
 	<a href="/users/$comment['username']">$comment['username']</a> $time(comment['time']) | <a href="/item?pid=$(pid)&comment=$(cid)">link</a>
       </div>
       <div style="margin-left: 10px;">
-	$:linkify(comment['comment'])
+	$comment['comment']
       </div>
+      $if comment['username'] == session['uname']:
+        <div>
+	  <a class="reply" href="/item?pid=$(pid)&cid=$cid&opt=delete">delete</a>
+	</div>
     </div>
     <form method="POST" action="/item?pid=$pid">
       <textarea name="comment"></textarea>
