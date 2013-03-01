@@ -106,6 +106,7 @@ header {
     position: relative;
     max-width: 1133px;
     margin: 0 auto;
+    margin-top: 35px;
 }
 
 #results-options ul {
