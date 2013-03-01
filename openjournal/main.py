@@ -10,12 +10,14 @@
 
 import waltz
 from waltz import web, track, session, render, User
+from web import wsgiserver
 import os
 import random
 import routes
 import datetime
 from utils import str2datetime
 from lazydb import Db
+from configs.config import server
 
 urls = ('/submit/?', 'routes.submit.Submit',
         '/item/?', 'routes.item.Item',
@@ -41,8 +43,9 @@ env = {'random': random,
        }
 sessions = {'logged': False,
             'uname': ''}
+ssl = server['ssl'] if all(server['ssl']) else None
 app = waltz.setup.dancefloor(urls, globals(), env=env, sessions=sessions,
-                             db='%s/db/waltz' % os.getcwd(),
+                             db='%s/db/waltz' % os.getcwd(), ssl=ssl,
                              autoreload=False)
 
 if __name__ == "__main__":
