@@ -4,6 +4,7 @@ from lazydb.lazydb import Db
 from api.v1.search import Search
 from utils import record_vote, record_submission
 
+
 class Submit:
     def GET(self):
         if not session().logged:
@@ -41,9 +42,10 @@ class Submit:
             return {'name': name,
                     'email': email,
                     'institution': institution}
-        
-        if author: 
-            if author[-1] == ')': author += ' '
+
+        def handle_author(author):
+            if author[-1] == ')':
+                author += ' '
             author = author.replace('(),', '() ,')
             start = author.index(' (')
             stop = author.index(') ')
@@ -51,4 +53,19 @@ class Submit:
             email = author[start+2:stop]
             institution = author[stop+1:]
             return authorize(name, email, institution)
+
+        if author:
+            if '(' or ')' in author:
+                handle_author(author)
+            else:
+                author = author.split()
+                name = author[0] + ' ' + author[1]
+                email = filter(lambda x: '@' in x, author)
+                try:
+                    institution = author[3]
+                except IndexError:
+                    institution = ''
+                return authorize(name, email, institution)
         return authorize()
+
+
