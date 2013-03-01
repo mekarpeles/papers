@@ -13,7 +13,7 @@ from utils import record_vote, record_comment, canvote
 
 class Item:
     def GET(self):
-        i = web.input(pid=None, cid=None)
+        i = web.input(pid=None, cid=None, opt=None)
         if i.pid:
             i.pid = int(i.pid)
             try:
@@ -22,11 +22,18 @@ class Item:
                 paper = papers[i.pid]
                 if i.cid:
                     i.cid = int(i.cid)
-                    # XXX Revise data storage scheme s.t. comment can
-                    # be retrieved by cid pkey, not i.cid'th index (below)
-                    # reason: cnnt can be deleted and lead to consistency
-                    # errors (id would then reference wrong entity)
-                    comment = paper['comments'][i.cid]
+                    try:
+                        comment = paper['comments'][i.cid]
+                    except:
+                        raise web.notfound()
+                    if not comment['enabled']:
+                        raise web.notfound()
+                    if i.opt == "delete" and session().logged and \
+                            comment['username'] == session()['uname']:
+                        paper['comments'][i.cid]['enabled'] = False
+                        papers[i.pid] = paper
+                        db.put('papers', papers)
+                        return render().item(i.pid, paper)
                     return render().comment(i.pid, i.cid, comment)
                 return render().item(i.pid, paper)
             except IndexError:
