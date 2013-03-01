@@ -13,7 +13,7 @@ $def with (paper, sort="popular")
       <strong><a class="result-title" href="$paper['url']">$paper['title']</a></strong>
       <p class="result-meta">
 	$paper['votes'] $('point' if paper['votes'] == 1 else 'points') by <a href="/users/$(paper['submitter'])">$(paper['submitter'])</a> $time(paper['time'])
-	| <a href="/item?pid=$(paper['pid'])">$('%s comments' % len(paper["comments"]) if len(paper["comments"]) else 'discuss')</a>
+	| <a href="/item?pid=$(paper['pid'])">$('%s comments' % len([p for p in paper["comments"] if p['enabled']]) if len([p for p in paper["comments"] if p['enabled']]) else 'discuss')</a>
       </p>
       <ul class="authors">
 	$for author in paper['authors']:
