@@ -1,6 +1,7 @@
 from waltz import web, track, session, render
-from lazydb.lazydb import Db
 from datetime import datetime
+from math import ceil
+from lazydb.lazydb import Db
 from utils import str2datetime, decayscore, minutes_since
 
 def popular(papers):
@@ -20,13 +21,18 @@ class Index:
 
     @track
     def GET(self):
-        i = web.input(sort="popular", limit=30)
+        i = web.input(sort="popular", limit=30, page=0)
         db = Db('db/openjournal')
         papers = db.get('papers')
-
+        limit = int(i.limit)
+        page = int(i.page)
+        pages = int(ceil(float(len(papers)) / limit))
         try:
             papers = globals()[i.sort](papers)
         except:
             papers = popular(papers)
-        return render().index(papers[:i.limit], sort=i.sort)
+        start = page * limit
+        end = start + limit
+        return render().index(papers[start:end], pages, i.page,
+                              sort=i.sort, limit=limit)
 
