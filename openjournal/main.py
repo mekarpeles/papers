@@ -40,6 +40,7 @@ env = {'random': random,
        'karma': lambda: User.get(session()['uname'])['karma'],
        'voted': lambda pid: int(pid) in \
            User.get(session()['uname'])['votes'],
+       'join': lambda x, y: y.join(x)
        }
 sessions = {'logged': False,
             'uname': ''}

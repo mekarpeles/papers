@@ -1,10 +1,18 @@
-$def with (papers, page=1, sort="popular", msg="")
+$def with (papers, pages, page=1, sort="popular", msg="", limit=30)
 
 $:render.plugins.nav()
 
 <ol id="results">
+  <div>
+    Page: 
+    <ul class="paginator">
+      $:(join(['<li><a href="/?page=%s">%s</a></li>' % (p, p+1) if p != int(page) else '<li>%s</li>' % (p+1) for p in xrange(pages+1)], ' '))
+    </ul>
+  </div>
+
   $for paper in papers[:30]:
     <li class="result">
       $:render.paper(paper, sort)
     </li>
 </ol>
+

@@ -262,3 +262,12 @@ hr{
 .clearfix {
     clear: both;
 }
+
+ul.paginator {
+    display: inline;
+    margin-left: 0px;
+}
+
+ul.paginator li {
+    display: inline;
+}
