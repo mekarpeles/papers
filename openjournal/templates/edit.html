@@ -8,20 +8,16 @@ $:render.plugins.nav()
       <div style="color: #888">
 	<a href="/users/$comment['username']">$comment['username']</a> $time(comment['time']) | <a href="/item?pid=$(pid)&comment=$(cid)">link</a>
       </div>
-      <div style="margin-left: 10px;">
-	$comment['comment']
-      </div>
-      $if comment['username'] == session['uname']:
+      <form method="POST" action="/item?pid=$pid&opt=edit">
+	<textarea name="comment" style="width: 600px; height: 150px;">$comment['comment']</textarea>
+	<div>
+	  <input type="submit" value="edit comment"/>
+	</div>
+      </form>
+      $if comment['username'] == session['uname'] and session['logged']:
         <div>
-	  <a class="reply" href="/item?pid=$(pid)&cid=$cid&opt=edit">edit</a>
 	  <a class="reply" href="/item?pid=$(pid)&cid=$cid&opt=delete">delete</a>
 	</div>
     </div>
-    <form method="POST" action="/item?pid=$pid">
-      <textarea name="comment"></textarea>
-      <div>
-	<input type="submit" value="add comment"/>
-      </div>
-    </form>
   </div>
 </div>

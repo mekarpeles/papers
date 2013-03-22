@@ -28,12 +28,15 @@ class Item:
                         raise web.notfound()
                     if not comment['enabled']:
                         raise web.notfound()
-                    if i.opt == "delete" and session().logged and \
-                            comment['username'] == session()['uname']:
-                        paper['comments'][i.cid]['enabled'] = False
-                        papers[i.pid] = paper
-                        db.put('papers', papers)
-                        return render().item(i.pid, paper)
+                    if comment['username'] == session()['uname'] and \
+                            session()['logged']:
+                        if i.opt == "delete":
+                            paper['comments'][i.cid]['enabled'] = False
+                            papers[i.pid] = paper
+                            db.put('papers', papers)
+                            return render().item(i.pid, paper)
+                        if i.opt == "edit":
+                            return render().edit(i.pid, i.cid, comment)
                     return render().comment(i.pid, i.cid, comment)
                 return render().item(i.pid, paper)
             except IndexError:
