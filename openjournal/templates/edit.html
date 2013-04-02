@@ -6,9 +6,9 @@ $:render.plugins.nav()
   <div style="padding: 10px;">
     <div style="padding: 20px 0px;";>
       <div style="color: #888">
-	<a href="/users/$comment['username']">$comment['username']</a> $time(comment['time']) | <a href="/item?pid=$(pid)&comment=$(cid)">link</a>
+	<a href="/users/$comment['username']">$comment['username']</a> $time(comment['time']) | <a href="/item?pid=$(pid)&cid=$(cid)">link</a>
       </div>
-      <form method="POST" action="/item?pid=$pid&opt=edit">
+      <form method="POST" action="/item?pid=$pid&cid=$(cid)&opt=edit">
 	<textarea name="comment" style="width: 600px; height: 150px;">$comment['comment']</textarea>
 	<div>
 	  <input type="submit" value="edit comment"/>
