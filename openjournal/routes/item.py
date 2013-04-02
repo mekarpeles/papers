@@ -13,7 +13,7 @@ from utils import record_vote, record_comment, canvote
 
 class Item:
     def GET(self):
-        i = web.input(pid=None, cid=None, opt=None)
+        i = web.input(pid=None, cid=None, opt="")
         if i.pid:
             i.pid = int(i.pid)
             try:
@@ -28,12 +28,15 @@ class Item:
                         raise web.notfound()
                     if not comment['enabled']:
                         raise web.notfound()
-                    if i.opt == "delete" and session().logged and \
-                            comment['username'] == session()['uname']:
-                        paper['comments'][i.cid]['enabled'] = False
-                        papers[i.pid] = paper
-                        db.put('papers', papers)
-                        return render().item(i.pid, paper)
+                    if comment['username'] == session()['uname'] and \
+                            session()['logged']:
+                        if i.opt == "delete":
+                            paper['comments'][i.cid]['enabled'] = False
+                            papers[i.pid] = paper
+                            db.put('papers', papers)
+                            return render().item(i.pid, paper)
+                        if i.opt == "edit":
+                            return render().edit(i.pid, i.cid, comment)
                     return render().comment(i.pid, i.cid, comment)
                 return render().item(i.pid, paper)
             except IndexError:
@@ -44,12 +47,11 @@ class Item:
         """Organize/sort the comments according to votes, author,
         time, etc (heuristic)
         """
-        i = web.input(pid=None, time=datetime.utcnow().ctime(),
+        i = web.input(pid=None, cid=None, time=datetime.utcnow().ctime(),
                       comment="", username=session()['uname'], votes=0,
-                      enabled=True)
+                      enabled=True, opt="")
         if i.pid:
             i.pid = int(i.pid)
-            i.cid = 0 #sets default cid val if first comment
 
             if not session().logged:
                 raise web.seeother('/login?redir=/item=?pid=%s' % i.pid)
@@ -57,11 +59,20 @@ class Item:
                 db = Db('db/openjournal')
                 papers = db.get('papers')                 
                 paper = papers[i.pid] #XXX get by key 'pid' instead
-                if paper['comments']:
-                    i.cid = paper['comments'][-1]['cid'] + 1
-                papers[i.pid]['comments'].append(dict(i))
+
+                if i.opt == "edit" and i.cid:
+                    for index, comment in enumerate(paper['comments']):
+                        if int(i.cid) == int(comment['cid']) and \
+                                comment['username'] == session()['uname']:
+                            paper['comments'][index]['comment'] = i.comment
+                
+                else:
+                    i.cid = 0 #sets default cid val if first comment
+                    if paper['comments']:
+                        i.cid = paper['comments'][-1]['cid'] + 1
+                    papers[i.pid]['comments'].append(dict(i))
+                    record_comment(i.username, i.pid, i.cid)
                 db.put('papers', papers)
-                record_comment(i.username, i.pid, i.cid)
                 return render().item(i.pid, paper)
             except IndexError:
                 return "No such item exists, id out of range"
