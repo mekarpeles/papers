@@ -19,9 +19,11 @@ $:render.plugins.nav()
 	    $(comment['comment'])
 	    <div>
 	      <a class="reply" href="/item?pid=$(pid)&cid=$(loop.index - 1)">reply</a>
-	      $if comment['username'] == session['uname']:
+	      $if comment['username'] == session['uname'] and session['logged']:
 	        $# add delete confirmation
+   	        <a class="reply" href="/item?pid=$(pid)&cid=$(loop.index - 1)&opt=edit">edit</a>
 	        <a class="reply" href="/item?pid=$(pid)&cid=$(loop.index - 1)&opt=delete">delete</a>
+
 	    </div>
 	  </div>
 	</div>

@@ -9,6 +9,7 @@ def popular(papers):
         return decayscore(paper['votes'], minutes_since(paper['time']))
     return sorted(papers, key=lambda paper: rank(paper),
                   reverse=True)
+
 def newest(papers):
     return sorted(papers, reverse=True,
                   key=lambda x: str2datetime(x['time']))
