@@ -118,10 +118,30 @@ class Paper(Storage):
 
 class Comment(Storage):
     def __init__(self, pid, cid):
-        self.pid = pid
-        self.cid = cid
-        for k, v in self.get(self.pid, self.cid).items():
+        for k, v in self.get(pid, cid).items():
             setattr(self, k, v)
+
+    def edit(self, comment):
+        """XXX Update timestamp? Version Control comment revs / edits?"""
+        try:
+            self.comment = comment
+            self.save()
+        except Exception as e:
+            raise Exception("Failed to save, rolling back transaction." \
+                                "Details: %s" % e)
+
+    def delete(self):
+        try:
+            self.enabled = False
+            self.save()
+        except Exception as e:
+            raise Exception("Failed to save, rolling back transaction." \
+                                "Details: %s" % e)
+
+    def save(self):
+        papers = self.db().get('papers')
+        papers[self.pid]['comments'][self.cid] = self.items()
+        self.db().puts('papers', papers)
 
     @staticmethod
     def db(dbname=os.getcwd()+"/db/openjournal"):
