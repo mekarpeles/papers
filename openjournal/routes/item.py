@@ -10,6 +10,7 @@ from waltz import web, render, session, User
 from datetime import datetime
 from lazydb import Db
 from utils import record_vote, record_comment, canvote
+from api.v1.paper import Paper, Comment
 
 class Item:
     def GET(self):
