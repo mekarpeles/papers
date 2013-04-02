@@ -1,33 +1,85 @@
+#-*- coding: utf-8 -*-
+
+"""
+
+"""
 
 import os
 from datetime import datetime
 from lazydb import Db
 
-class Paper(object):
+class Storage(dict):
+    """
+    A Storage object is like a dictionary except `obj.foo` can be used
+    in addition to `obj['foo']`.
     
+        >>> o = storage(a=1)
+        >>> o.a
+        1
+        >>> o['a']
+        1
+        >>> o.a = 2
+        >>> o['a']
+        2
+        >>> del o.a
+        >>> o.a
+        Traceback (most recent call last):
+            ...
+        AttributeError: 'a'
+    
+    """
+    def __getattr__(self, key): 
+        try:
+            return self[key]
+        except KeyError, k:
+            raise AttributeError, k
+    
+    def __setattr__(self, key, value): 
+        self[key] = value
+    
+    def __delattr__(self, key):
+        try:
+            del self[key]
+        except KeyError, k:
+            raise AttributeError, k
+    
+    def __repr__(self):     
+        return '<Storage ' + dict.__repr__(self) + '>'
+
+class Paper(Storage):
+
+    def __init__(self, pid):
+        self.pid = pid
+        for k, v in self.get(pid).items():
+            setattr(self, k, v)
+    
+    def __repr__(self):     
+        return '<Paper ' + dict.__repr__(self) + '>'
+
     @staticmethod
     def db(dbname=os.getcwd()+"/db/openjournal"):
         return Db(dbname)
 
     @classmethod
     def getall(cls):
-        return cls.get()
-
+        return cls.db().get('papers')
+    
     @classmethod
-    def get(cls, pid=None, cid=None):
-        papers = cls.db().get('papers')
+    def get(cls, pid):
+        papers = cls.getall()
         if pid:
-            if cid:
-                return papers[pid]['comments'][cid]
-            return papers[pid]
-        return papers
+            try:
+                return papers[pid]
+            except IndexError as e:
+                raise IndexError("No paper with pid %s. Details: %s" % (pid, e))
+        raise ValueError("Paper.get(pid) invoked with invald or non-existing id: %s" % pid)
         
     @staticmethod
     def decay(score, t):
-        """http://www.seomoz.org/blog/reddit-stumbleupon-delicious-and-hacker-news-algorithms-exposed
+        """seomoz.org/blog/reddit-stumbleupon-delicious-and-hacker-news-algorithms-exposed
         convert time to: hours since submission
         """
-        return pow((score - 1) / (t + 2), 1.5)        
+        return pow((score - 1) / (t + 2), 1.5)
 
     @classmethod
     def sort(cls, method="popular"):
@@ -63,3 +115,35 @@ class Paper(object):
         cls.decay
         """
         return cls.decay(cls.papers())[pid]['score']
+
+class Comment(Storage):
+    def __init__(self, pid, cid):
+        self.pid = pid
+        self.cid = cid
+        for k, v in self.get(self.pid, self.cid).items():
+            setattr(self, k, v)
+
+    @staticmethod
+    def db(dbname=os.getcwd()+"/db/openjournal"):
+        return Db(dbname)
+    
+    @classmethod
+    def get(cls, pid, cid):
+        papers = cls.db().get('papers')
+        if pid and cid:
+            try:
+                paper = papers[pid]
+                try:
+                    return paper['comments'][cid]
+                except IndexError as e:
+                    raise IndexError("Paper with pid %s has no comment " \
+                                         "with cid: %s. Details: %s" %
+                                     (pid, cid, e))
+            except IndexError as e:
+                raise IndexError("No paper with pid %s. Details: %s" % (pid, e))
+        raise ValueError("Comment.get(pid) invoked with invald or non-existant " \
+                             "<pid: %s> or <cid: %s>" % (cid, pid))
+
+    def __repr__(self):     
+        return '<Paper ' + dict.__repr__(self) + '>'
+
