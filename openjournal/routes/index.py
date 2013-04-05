@@ -3,6 +3,7 @@ from datetime import datetime
 from math import ceil
 from lazydb.lazydb import Db
 from utils import str2datetime, decayscore, minutes_since
+from api.v1.paper import Paper
 
 def popular(papers):
     def rank(paper):
@@ -23,8 +24,7 @@ class Index:
     @track
     def GET(self):
         i = web.input(sort="popular", limit=30, page=0)
-        db = Db('db/openjournal')
-        papers = db.get('papers')
+        papers = Paper.getall()
         limit = int(i.limit)
         page = int(i.page)
         pages = int(ceil(float(len(papers)) / limit))
