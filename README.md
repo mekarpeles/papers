@@ -1,5 +1,8 @@
 # OpenJournal
 
+![Build Status](https://travis-ci.org/mekarpeles/openjournal.png)
+
+
 OpenJournal is an online community united around the concept of sharing, discussing, collaborating on and improving academic papers.
 
 ## Installation
