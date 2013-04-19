@@ -25,6 +25,7 @@ setup(
         'waltz >= 0.1.68',
         'lepl >= 5.1.3',
         'whoosh >= 2.4.1',
+        'requests >= 1.1.0',
         'pypdf',
         'markdown'
     ],
