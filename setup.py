@@ -17,7 +17,6 @@ setup(
         'openjournal',
         'openjournal.subapps',
         'openjournal.routes',
-        'openjournal.test'
         ],
     platforms='any',
     scripts=[],
