@@ -9,7 +9,7 @@ from distutils.core import setup
 
 setup(
     name='openjournal',
-    version='0.0.1',
+    version='0.0.11',
     url='http://github.com/mekarpeles/openjournal',
     author='mek',
     author_email='michael.karpeles@gmail.com',
