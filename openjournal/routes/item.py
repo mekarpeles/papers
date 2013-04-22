@@ -18,7 +18,7 @@ class Item:
         if i.pid:
             i.pid = int(i.pid)
             try:
-                db = Db('db/openjournal')
+                papers = Papers.getall()
                 papers = db.get('papers')
                 paper = papers[i.pid]
                 if i.cid:
