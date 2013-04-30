@@ -19,7 +19,6 @@ class Item:
             i.pid = int(i.pid)
             try:
                 papers = Paper.getall()
-                papers = db.get('papers')
                 paper = papers[i.pid]
                 if i.cid:
                     i.cid = int(i.cid)
