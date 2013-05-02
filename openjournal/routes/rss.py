@@ -1,10 +1,10 @@
 import waltz
-from lazydb import Db
+from api.v1.paper import Paper
 from routes.index import newest
 
 def items():
     """A function which generates all rss items for this website"""
-    papers = Db('db/openjournal').get('papers')
+    papers = Paper.getall()
     items = []
     desc = "%s - %s votes, submitted by: %s @ %s" 
     for paper in filter(lambda x: x['enabled'], newest(papers)):
