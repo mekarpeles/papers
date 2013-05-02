@@ -23,6 +23,7 @@ setup(
     license='LICENSE',
     install_requires=[
         'waltz >= 0.1.68',
+        'paste >= 1.7.5.1',
         'lepl >= 5.1.3',
         'whoosh >= 2.4.1',
         'requests >= 1.1.0',
