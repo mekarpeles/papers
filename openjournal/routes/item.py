@@ -18,9 +18,7 @@ class Item:
         if i.pid:
             i.pid = int(i.pid)
             try:
-                db = Db('db/openjournal')
-                papers = db.get('papers')
-                paper = papers[i.pid]
+                paper = Paper.get(i.pid))
                 if i.cid:
                     i.cid = int(i.cid)
                     try:
@@ -44,6 +42,10 @@ class Item:
     def POST(self):
         """Organize/sort the comments according to votes, author,
         time, etc (heuristic)
+
+        POST route to add a comment to a paper
+        side effects:
+        - handles votes / karma
         """
         i = web.input(pid=None, time=datetime.utcnow().ctime(),
                       comment="", username=session()['uname'], votes=0,
@@ -55,14 +57,19 @@ class Item:
             if not session().logged:
                 raise web.seeother('/login?redir=/item=?pid=%s' % i.pid)
             try:
-                db = Db('db/openjournal')
-                papers = db.get('papers')                 
-                paper = papers[i.pid] #XXX get by key 'pid' instead
+                paper = Paper.get(i.pid) # Paper
+                # The following should be a generic function
+                # of the Paper obj
                 if paper['comments']:
                     i.cid = paper['comments'][-1]['cid'] + 1
-                papers[i.pid]['comments'].append(dict(i))
+
+                # This should be changed to:
+                # >>> paper['comments'].append(dict(i)
+                # >>> paper.save()
+                    papers[i.pid]['comments'].append(dict(i))
                 db.put('papers', papers)
                 record_comment(i.username, i.pid, i.cid)
+
                 return render().item(i.pid, paper)
             except IndexError:
                 return "No such item exists, id out of range"
