@@ -6,51 +6,15 @@
 
 import os
 from datetime import datetime
+from waltz import Storage
 from lazydb import Db
-
-class Storage(dict):
-    """
-    A Storage object is like a dictionary except `obj.foo` can be used
-    in addition to `obj['foo']`.
-    
-        >>> o = storage(a=1)
-        >>> o.a
-        1
-        >>> o['a']
-        1
-        >>> o.a = 2
-        >>> o['a']
-        2
-        >>> del o.a
-        >>> o.a
-        Traceback (most recent call last):
-            ...
-        AttributeError: 'a'
-    
-    """
-    def __getattr__(self, key): 
-        try:
-            return self[key]
-        except KeyError, k:
-            raise AttributeError, k
-    
-    def __setattr__(self, key, value): 
-        self[key] = value
-    
-    def __delattr__(self, key):
-        try:
-            del self[key]
-        except KeyError, k:
-            raise AttributeError, k
-    
-    def __repr__(self):     
-        return '<Storage ' + dict.__repr__(self) + '>'
 
 class Paper(Storage):
 
-    def __init__(self, pid):
-        self.pid = pid
-        for k, v in self.get(pid).items():
+    def __init__(self, pid, paper=None):
+        self.pid = int(pid)
+        paper = paper if paper self.get(self.pid).items()
+        for k, v in paper:
             setattr(self, k, v)
     
     def __repr__(self):     
@@ -72,12 +36,14 @@ class Paper(Storage):
                 return papers[pid]
             except IndexError as e:
                 raise IndexError("No paper with pid %s. Details: %s" % (pid, e))
-        raise ValueError("Paper.get(pid) invoked with invald or non-existing id: %s" % pid)
+        raise ValueError("Paper.get(pid) invoked with invald or " \
+                             "non-existing id: %s" % pid)
         
     @staticmethod
     def decay(score, t):
-        """seomoz.org/blog/reddit-stumbleupon-delicious-and-hacker-news-algorithms-exposed
-        convert time to: hours since submission
+        """seomoz.org/blog/reddit-stumbleupon-delicious-and-\
+        hacker-news-algorithms-exposed convert time to: hours since
+        submission
         """
         return pow((score - 1) / (t + 2), 1.5)
 
@@ -116,9 +82,38 @@ class Paper(Storage):
         """
         return cls.decay(cls.papers())[pid]['score']
 
+    def disable(self):
+        self.enable = False
+
+    def save(self):
+        papers = self.getall()
+        papers[self.pid] = self.items()
+        return self.db().puts('papers', papers)
+
+    def add_comment(self, c):
+        if not c.comment: raise ValueError("Comment must be a str with len() > 0")
+        cid = 0 if not self.comments else int(self.comments[-1]['cid'] + 1)
+        self.comments.append(dict(c))
+        self.save()
+
+    def edit_comment(self, cid, comment, uname):
+        if not comment: raise ValueError("Comment must be a str with len() > 0")
+        try:
+            cid = int(cid)
+        except ValueError as e:
+            raise ValueError(e)
+        c = Comment(comment=comment)
+        for index, comment in enumerate(self.comments):
+            if cid == int(comment['cid']) and \
+                    comment['username'] == uname:
+                paper['comments'][index]['comment'] = i.comment
+                paper['comments'][index]['time'] = i.time
+        self.save()
+
 class Comment(Storage):
-    def __init__(self, pid, cid):
-        for k, v in self.get(pid, cid).items():
+    def __init__(self, pid, cid, comment=None):
+        comment = comment if comment else self.get(pid, cid).items()
+        for k, v in comment:
             setattr(self, k, v)
 
     def edit(self, comment):

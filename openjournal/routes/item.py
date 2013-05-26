@@ -10,15 +10,16 @@ from waltz import web, render, session, User
 from datetime import datetime
 from lazydb import Db
 from utils import record_vote, record_comment, canvote
-from api.v1.paper import Paper, Comment
+from api.v1.paper import Paper
 
 class Item:
     def GET(self):
-        i = web.input(pid=None, cid=None, opt=None)
+        i = web.input(pid=None, cid=None, opt="")
         if i.pid:
             i.pid = int(i.pid)
             try:
-                paper = Paper.get(i.pid))
+                papers = Paper.getall()
+                paper = Paper(i.pid, paper=papers[i.pid])
                 if i.cid:
                     i.cid = int(i.cid)
                     try:
@@ -27,12 +28,15 @@ class Item:
                         raise web.notfound()
                     if not comment['enabled']:
                         raise web.notfound()
-                    if i.opt == "delete" and session().logged and \
-                            comment['username'] == session()['uname']:
-                        paper['comments'][i.cid]['enabled'] = False
-                        papers[i.pid] = paper
-                        db.put('papers', papers)
-                        return render().item(i.pid, paper)
+                    if comment['username'] == session()['uname'] and \
+                            session()['logged']:
+                        if i.opt == "delete":
+                            paper['comments'][i.cid]['enabled'] = False
+                            papers[i.pid] = paper
+                            db.put('papers', papers)
+                            return render().item(i.pid, paper)
+                        if i.opt == "edit":
+                            return render().edit(i.pid, i.cid, comment)
                     return render().comment(i.pid, i.cid, comment)
                 return render().item(i.pid, paper)
             except IndexError:
@@ -47,33 +51,34 @@ class Item:
         side effects:
         - handles votes / karma
         """
-        i = web.input(pid=None, time=datetime.utcnow().ctime(),
-                      comment="", username=session()['uname'], votes=0,
-                      enabled=True)
-        if i.pid:
+        i = web.input(pid=None, cid=None, time=datetime.utcnow().ctime(),
+                      comment="", votes=0, enabled=True, opt="")
+        option = i.pop(opt)
+        if i.comment and i.pid:
             i.pid = int(i.pid)
-            i.cid = 0 #sets default cid val if first comment
 
             if not session().logged:
-                raise web.seeother('/login?redir=/item=?pid=%s' % i.pid)
+                raise web.seeother('/login?redir=/item?pid=%s' % i.pid)
             try:
-                paper = Paper.get(i.pid) # Paper
-                # The following should be a generic function
-                # of the Paper obj
-                if paper['comments']:
-                    i.cid = paper['comments'][-1]['cid'] + 1
+                papers = Paper.getall()
+                paper = Paper(i.pid, paper=papers[i.pid])
+            except IndexError:
+                # TODO: Log IndexEror("No such paper")
+                raise web.seeother('/')
 
-                # This should be changed to:
-                # >>> paper['comments'].append(dict(i)
-                # >>> paper.save()
-                    papers[i.pid]['comments'].append(dict(i))
-                db.put('papers', papers)
-                record_comment(i.username, i.pid, i.cid)
+            if i.cid:
+                if option == "edit":
+                    try:
+                        paper.edit_comment(i.cid, i.comment,
+                                           uname=session()['uname'])
+                    except ValueError:
+                        return render().item(i.pid, paper)
+                else:
+                    paper.add_comment(i.cid, i)
+                    record_comment(session()['uname'], i.pid, i.cid)
 
                 return render().item(i.pid, paper)
-            except IndexError:
-                return "No such item exists, id out of range"
-        raise web.seeother('/')        
+        raise web.seeother('/')
 
     @staticmethod
     def clear(pid):

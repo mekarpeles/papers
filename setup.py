@@ -9,7 +9,7 @@ from distutils.core import setup
 
 setup(
     name='openjournal',
-    version='0.0.1',
+    version='0.0.11',
     url='http://github.com/mekarpeles/openjournal',
     author='mek',
     author_email='michael.karpeles@gmail.com',
@@ -17,15 +17,16 @@ setup(
         'openjournal',
         'openjournal.subapps',
         'openjournal.routes',
-        'openjournal.test'
         ],
     platforms='any',
     scripts=[],
     license='LICENSE',
     install_requires=[
-        'waltz >= 0.1.64',
+        'waltz >= 0.1.68',
+        'paste >= 1.7.5.1',
         'lepl >= 5.1.3',
         'whoosh >= 2.4.1',
+        'requests >= 1.1.0',
         'pypdf',
         'markdown'
     ],

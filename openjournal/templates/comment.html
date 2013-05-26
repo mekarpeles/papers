@@ -13,6 +13,7 @@ $:render.plugins.nav()
       </div>
       $if comment['username'] == session['uname']:
         <div>
+	  <a class="reply" href="/item?pid=$(pid)&cid=$cid&opt=edit">edit</a>
 	  <a class="reply" href="/item?pid=$(pid)&cid=$cid&opt=delete">delete</a>
 	</div>
     </div>

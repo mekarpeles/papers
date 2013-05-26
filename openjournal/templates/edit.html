@@ -1,0 +1,23 @@
+$def with(pid, cid, comment)
+
+$:render.plugins.nav()
+
+<div id="results">
+  <div style="padding: 10px;">
+    <div style="padding: 20px 0px;";>
+      <div style="color: #888">
+	<a href="/users/$comment['username']">$comment['username']</a> $time(comment['time']) | <a href="/item?pid=$(pid)&cid=$(cid)">link</a>
+      </div>
+      <form method="POST" action="/item?pid=$pid&cid=$(cid)&opt=edit">
+	<textarea name="comment" style="width: 600px; height: 150px;">$comment['comment']</textarea>
+	<div>
+	  <input type="submit" value="edit comment"/>
+	</div>
+      </form>
+      $if comment['username'] == session['uname'] and session['logged']:
+        <div>
+	  <a class="reply" href="/item?pid=$(pid)&cid=$cid&opt=delete">delete</a>
+	</div>
+    </div>
+  </div>
+</div>

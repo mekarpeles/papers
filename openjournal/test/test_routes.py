@@ -1,16 +1,14 @@
 import unittest
-import requests
-
-class TestModules(unittest.TestCase):
-    def test_main(self):
-        import openjournal.main
+from paste.fixture import TestApp
+from nose.tools import *
+from main import app
 
 class TestRoutes(unittest.TestCase):
-
-    def test_home(self):
-        pass
-
-    def test_submit(self):
-        pass
+    def test_index(self):
+        middleware = []
+        testApp = TestApp(app.wsgifunc(*middleware))
+        r = testApp.get('/')
+        assert_equal(r.status, 200)
+        r.mustcontain('openjournal')
     
     
