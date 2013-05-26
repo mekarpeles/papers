@@ -1,21 +1,16 @@
-from waltz import web, render, session, exponential_backoff, User
+#-*- coding: utf-8 -*-
+
+"""
+    routes.auth
+    ~~~~~~~~~~~
+"""
+
 import re
 import datetime
+from waltz import web, render, session, exponential_backoff, User
+from api.v1.user import Academic
 
-username_len = 2
-passwd_len = 6
-passwd_valid = '!@#$%^&+=_'
-username_regex = r'[A-Za-z0-9_]{%s,}' % username_len
-passwd_regex = r'[A-Za-z0-9%s]{%s,}' % (passwd_valid, passwd_len)
-passwd_err = "Please make sure your password is at least %s " \
-    "characters long and only contains numbers, letters, " \
-    "or any of the following special characters: %s" % (passwd_len,
-                                                        passwd_valid)
-username_err = "Please make sure your username is at least %s " \
-    "characters long and only contains numbers, " \
-    "letters, or underscores." % username_len
-
-def loadsession(u):
+def load_session(u, session):
     """Constructs a dict of session variables for user u"""
     session().update({'logged': True,
                       'uname': u['username'],
@@ -23,6 +18,13 @@ def loadsession(u):
                       'created': u['created'],
                       'bio': u['bio']
                       })
+
+def invalidate_session(session):
+    session().update({'logged': False,
+                      'uname': '',
+                      'karma': 0,
+                      })
+    session().kill()
 
 class Login:
     """Requires stateful exponential backoff to prevent rate limiting"""
@@ -32,17 +34,13 @@ class Login:
     def POST(self):
         """TODO: handle redir"""
         i = web.input(username='', passwd='', redir='')
-        if i.username and i.passwd:
-            try:
-                u = User.get(i.username)
-                if User.easyauth(u, i.passwd):
-                    loadsession(u)
-                    raise web.seeother('/')
-            except:
-                raise
-            err = "Incorrect username or password"
+        if Academic.validates(i.username, i.passwd):
+            if Academic.authenticates(u, i.passwd):
+                load_session(u, session)
+                raise web.seeother('/')
+            err = ""
         else:
-            err = "Please provide all required fields"
+            err = ""
         return render().auth.login(err=err)
 
 class Register:
@@ -61,22 +59,18 @@ class Register:
                     'email': ''}
 
         i = web.input(username='', passwd='', redir='')
-        if i.username and i.passwd:            
-            if re.match(username_regex, i.username):
-                if re.match(passwd_regex, i.passwd):
-                    try:
-                        # treat as login if creds are right
-                        u = User.get(i.username)
-                        if User.easyauth(u, i.passwd):
-                            loadsession(u)
-                            raise web.seeother('/')
-                    except:
-                        pass
-
+        if validates(username, passwd):
+            try: # login if creds are right
+                u = User.get(
+                if User.easyauth(u, i.passwd):
+                    load_session(u, session)
+                    raise web.seeother('/')
+            except:
+                pass
                     try:
                         u = User.register(i.username, i.passwd,
                                           **defusr())
-                        loadsession(u)
+                        load_session(u, session)
                         raise web.seeother('/')
                     except:
                         err = "Username unavailable"
@@ -92,11 +86,7 @@ class Logout:
     def GET(self):
         """Invalidate session, etc"""
         i = web.input(redir='')
-        session().update({'logged': False,
-                          'uname': '',
-                          'karma': 0,
-                          })
-        session().kill()
+        invalidate_session(session)
         if i.redir:
             raise web.seeother(i.redir)
         raise web.seeother('/')
