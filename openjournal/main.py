@@ -2,14 +2,15 @@
 """
     main.py
     ~~~~~~~
-    Waltz Lightweight webserver. Waltz around while never missing a beat.
+
+    Main application for OpenJournal, built using the Waltz Lightweight webserver.
 
     :copyright: (c) 2012 by Mek
     :license: BSD, see LICENSE for more details.
 """
 
 import waltz
-from waltz import web, track, session, render, User
+from waltz import web, track, User
 from web import wsgiserver
 import os
 import random
