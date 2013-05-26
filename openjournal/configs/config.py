@@ -4,7 +4,7 @@
     ~~~~~~~~~
 
     This module is the middle man for handling/consolidating
-    configurations for the githubris project.
+    configurations for the openjournal project.
 
     :copyright: (c) 2012 by Mek
     :license: BSD, see LICENSE for more details.
