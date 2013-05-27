@@ -8,7 +8,7 @@
 import re
 import datetime
 from waltz import web, render, session, exponential_backoff, User
-from api.v1.user import Academic
+from api.v1.user import Academic, ERR as AUTH_ERR
 
 def load_session(u, session):
     """Constructs a dict of session variables for user u"""
@@ -26,6 +26,21 @@ def invalidate_session(session):
                       })
     session().kill()
 
+def login(username, passwd):
+    """Logs a user in and sets their session data. Assumes
+    credentials have already validated via Academic.validates.
+    """
+    try:
+        # assume user exists, try to fetch account
+        u = Academic(username)
+    except AttributeError:
+        return False
+    
+    if Academic.authenticates(u, passwd):
+        load_session(u, session)
+        return True
+    return False
+
 class Login:
     """Requires stateful exponential backoff to prevent rate limiting"""
     def GET(self):
@@ -33,15 +48,12 @@ class Login:
 
     def POST(self):
         """TODO: handle redir"""
-        i = web.input(username='', passwd='', redir='')
+        i = web.input(username='', passwd='', redir='/')
         if Academic.validates(i.username, i.passwd):
-            if Academic.authenticates(u, i.passwd):
-                load_session(u, session)
-                raise web.seeother('/')
-            err = ""
-        else:
-            err = ""
-        return render().auth.login(err=err)
+            if login(i.username, i.passwd):
+                raise web.seeother(i.redir)
+            return render().auth.login(err=AUTH_ERR['wrong_creds'])
+        return render().auth.login(err=AUTH_ERR['missing_creds'])
 
 class Register:
     """Requires stateful exponential backoff to prevent rate limiting"""
@@ -58,28 +70,20 @@ class Register:
                     'bio': '',
                     'email': ''}
 
-        i = web.input(username='', passwd='', redir='')
-        if validates(username, passwd):
-            try: # login if creds are right
-                u = User.get(
-                if User.easyauth(u, i.passwd):
-                    load_session(u, session)
-                    raise web.seeother('/')
-            except:
-                pass
-                    try:
-                        u = User.register(i.username, i.passwd,
-                                          **defusr())
-                        load_session(u, session)
-                        raise web.seeother('/')
-                    except:
-                        err = "Username unavailable"
-                else:
-                    err = passwd_err
-            else:
-                err = username_err
-        else:
-            err = "Please enter all required fields"
+        i = web.input(username='', passwd='', redir='/')
+
+        if Academic.validates(i.username, i.passwd):
+            if login(i.username, i.passwd):
+                raise web.seeother(i.redir)
+
+            try: # attempting registration if login
+                u = Academic.register(i.username, i.passwd, **defusr())
+                load_session(u, session)
+                raise web.seeother(i.redir)
+            except Academic.RegistrationException as e:
+                err = AUTH_ERR[str(e.message)]
+            else: # If there's an uncaught error, assuming missing args for auth
+                err = "Please enter all required fields"
         return render().auth.register(err=err)
 
 class Logout:
