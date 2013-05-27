@@ -1,4 +1,4 @@
-$def with(pid, paper)
+$def with(paper)
 
 $var css: /static/css/item.css
 
@@ -13,22 +13,22 @@ $:render.plugins.nav()
         <div class="comment">
           <div class="comment-meta">
   	    <a href="/users/$comment['username']">$comment['username']</a>
-	    $time(comment['time']) | <a href="/item?pid=$(pid)&cid=$(loop.index - 1)">link</a>
+	    $time(comment['time']) | <a href="/item?pid=$(paper.pid)&cid=$(loop.index - 1)">link</a>
 	  </div>
 	  <div class="comment-body">
 	    $(comment['comment'])
 	    <div>
-	      <a class="reply" href="/item?pid=$(pid)&cid=$(loop.index - 1)">reply</a>
+	      <a class="reply" href="/item?pid=$(paper.pid)&cid=$(loop.index - 1)">reply</a>
 	      $if comment['username'] == session['uname'] and session['logged']:
 	        $# add delete confirmation
-   	        <a class="reply" href="/item?pid=$(pid)&cid=$(loop.index - 1)&opt=edit">edit</a>
-	        <a class="reply" href="/item?pid=$(pid)&cid=$(loop.index - 1)&opt=delete">delete</a>
+   	        <a class="reply" href="/item?pid=$(paper.pid)&cid=$(loop.index - 1)&opt=edit">edit</a>
+	        <a class="reply" href="/item?pid=$(paper.pid)&cid=$(loop.index - 1)&opt=delete">delete</a>
 
 	    </div>
 	  </div>
 	</div>
     $if session.logged:
-      <form method="POST" action="/item?pid=$pid">
+      <form method="POST" action="/item?pid=$(paper.pid)">
 	<textarea name="comment"></textarea>
 	<div>
 	  <input type="submit" value="add comment"/>
