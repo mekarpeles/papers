@@ -58,7 +58,7 @@ class Academic(User):
         return cls.easyauth(user, passwd)
 
     @classmethod
-    def register(cls, username, passwd, **kwars):
+    def register(cls, username, passwd, **kwargs):
         if re.match(USERNAME_RE, username):
             if re.match(PASSWD_RE, passwd):
                 try:
