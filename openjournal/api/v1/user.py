@@ -1,4 +1,5 @@
-from waltz import User
+import re
+from waltz import User, session
 from waltz.utils import Storage
 from waltz.security import username_regex, passwd_regex
 
@@ -7,7 +8,7 @@ PASSWD_LEN = 6
 USERNAME_VALID = ""
 PASSWD_VALID = '!@#$%^&+=_'
 USERNAME_RE = username_regex % (USERNAME_VALID, USERNAME_LEN)
-PASSWD_RE = passwd_regex % (PASSWD_VLID, PASSWD_LEN)
+PASSWD_RE = passwd_regex % (PASSWD_VALID, PASSWD_LEN)
 
 ERR = {"missing_creds": "Please provide all required fields",
        "malformed_creds": "Please make sure your password is at least %s " \
@@ -15,11 +16,12 @@ ERR = {"missing_creds": "Please provide all required fields",
            "or any of the following special characters: %s. " \
            "Please make sure your username is at least %s " \
            "characters long and only contains numbers, " \
-           "letters, or underscores." % (passwd_len, passwd_valid, username_len),
-       "wrong_creds": "Incorrect username or password"
+           "letters, or underscores." % (PASSWD_LEN, PASSWD_VALID, USERNAME_LEN),
+       "wrong_creds": "Incorrect username or password",
+       "already_registered": "Sorry, username already registered"
        }
 
-class Academic(Storage, User):
+class Academic(User):
     """class Academic(User(Account))
 
     Academic An extension of the waltz.User class. It provides
@@ -30,25 +32,41 @@ class Academic(Storage, User):
     which captures and handles the exception following attempted
     access for User outside of the scope of a waltz/webpy route
     """
+    class RegistrationException(Exception): pass
 
-    def __init__(self, username):
+    def __init__(self, username, user=None):
         self.username = username
-        u = User.get(self.username)
-        try:
-            for k, v in User.get(u).items():
-                setattr(self, k, v)
-        except:
-            pass
+        u = user if user else User.get(self.username)
+        if u is None: 
+            raise AttributeError("User doesn't exist")
+        for k, v in u.items():
+            setattr(self, k, v)
 
     def __repr__(self):     
         return '<Academic ' + dict.__repr__(self) + '>'
 
     @classmethod
-    def authenticates(cls, username, passwd):
+    def exists(username):
+        return bool(cls.get(username))
+    
+    @classmethod
+    def authenticates(cls, user, passwd):
         """Returns a boolean describing the success of
-        authentication
+        authentication. Currently uses easyauth which assumes lazydb
+        as Db.
         """
-        return super(User, cls).easyauth(user, passwd)
+        return cls.easyauth(user, passwd)
+
+    @classmethod
+    def register(cls, username, passwd, **kwars):
+        if re.match(USERNAME_RE, username):
+            if re.match(PASSWD_RE, passwd):
+                try:
+                    return super(User, cls).register(username, passwd, **kwargs)
+                except:
+                    raise cls.RegistrationException("already_registered")
+        print username, passwd
+        raise cls.RegistrationException('malformed_creds')
 
     @classmethod
     def login(cls, u, session):
@@ -85,16 +103,12 @@ class Academic(Storage, User):
             >>> b
             ["Incorrect username or password"]
         """
-        result = True
-        errs = []
         if not (username and passwd):
-            result = False
-            errs.append(ERR["missing_cred"])
-        if not (re.match(USERNAME_RE, i.username) and \
-            re.match(PASSWD_RE, i.passwd)):
-            result = False
-            errs.append(ERR["invalid_cred"])
-        return result, errs
+            return False
+        if not (re.match(USERNAME_RE, username) and \
+            re.match(PASSWD_RE, passwd)):
+            return False
+        return True
 
     @staticmethod
     def canvote(username, pid, cid=None):
