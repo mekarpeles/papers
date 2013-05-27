@@ -6,13 +6,14 @@ $:render.plugins.nav()
   <div>
     Page: 
     <ul class="paginator">
-      $:(join(['<li><a href="/?page=%s">%s</a></li>' % (p, p+1) if p != int(page) else '<li>%s</li>' % (p+1) for p in xrange(pages+1)], ' '))
+      $:(join(['<li><a href="/?page=%s">%s</a></li>' % (p, p+1) if p != int(page) else '<li>%s</li>' % (p+1) for p in xrange(pages)], ' '))
     </ul>
   </div>
 
   $for paper in papers[:30]:
-    <li class="result">
-      $:render.paper(paper, sort)
-    </li>
+    $if paper.enabled:
+      <li class="result">
+        $:render.paper(paper, sort)
+      </li>
 </ol>
 
