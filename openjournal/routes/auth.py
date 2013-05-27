@@ -49,11 +49,14 @@ class Login:
     def POST(self):
         """TODO: handle redir"""
         i = web.input(username='', passwd='', redir='/')
-        if Academic.validates(i.username, i.passwd):
-            if login(i.username, i.passwd):
-                raise web.seeother(i.redir)
-            return render().auth.login(err=AUTH_ERR['wrong_creds'])
-        return render().auth.login(err=AUTH_ERR['missing_creds'])
+        if not (i.username and i.passwd):
+            return render().auth.login(err=AUTH_ERR['missing_creds'])
+        if not Academic.validates(i.username, i.passwd):
+            return render().auth.login(err=AUTH_ERR['malformed_creds'])
+        if login(i.username, i.passwd):
+            raise web.seeother(i.redir)
+        return render().auth.login(err=AUTH_ERR['wrong_creds'])
+        
 
 class Register:
     """Requires stateful exponential backoff to prevent rate limiting"""
