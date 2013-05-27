@@ -20,10 +20,12 @@ def decayscore(score, t):
 from waltz import User
 
 def canvote(u, pid):
+    pid = int(pid)
     return pid not in u['votes']
 
 def record_vote(yourname, submitter_name, pid, cid=None):
     """XXX Todo: expose as web api/v1/vote and require nonce?"""
+    pid, cid = map(int, (pid, cid))
     def inc_vote(user):
         user['votes'].append(pid)
         return user
@@ -36,6 +38,7 @@ def record_submission(submitter_name, pid):
     """Move to openjoural specific user api.
     Pushes pid onto user's posts set
     """
+    pid, cid = map(int, (pid, cid))
     u = User.get(submitter_name)
     u['posts'].append(pid)
     return User.replace(submitter_name, u)
@@ -44,6 +47,7 @@ def record_comment(commenter_name, pid, cid):
     """XXX add karma to comment voting later
     - you get 1 karma for commenting
     """
+    pid, cid = map(int, (pid, cid))
     u = User.get(commenter_name)
     u['comments'].append((pid, cid))
     return User.replace(commenter_name, u)
