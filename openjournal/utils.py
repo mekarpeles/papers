@@ -51,4 +51,3 @@ def record_comment(commenter_name, pid, cid):
     u = User.get(commenter_name)
     u['comments'].append((pid, cid))
     return User.replace(commenter_name, u)
-    
