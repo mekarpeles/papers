@@ -11,13 +11,12 @@
 
 import os
 import random
-import routes
 import datetime
 import waltz
 from waltz import web, User
 from web import wsgiserver
+from api.v1.user import has_voted, get_karma
 from utils import str2datetime
-from lazydb import Db
 from configs.config import server
 
 urls = ('/submit/?', 'routes.submit.Submit',
@@ -39,9 +38,8 @@ urls = ('/submit/?', 'routes.submit.Submit',
 env = {'random': random,
        'time': lambda x: web.datestr(str2datetime(x),
                                      now=datetime.datetime.utcnow()),
-       'karma': lambda: User.get(waltz.session()['uname'])['karma'],
-       'voted': lambda pid: int(pid) in \
-           User.get(waltz.session()['uname'])['votes'],
+       'karma': lambda: get_karma(waltz.session()['uname']),
+       'voted': lambda pid: has_voted(waltz.session()['uname'], pid),
        'join': lambda x, y: y.join(x)
        }
 sessions = {'logged': False,

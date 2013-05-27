@@ -55,7 +55,10 @@ class Academic(User):
         authentication. Currently uses easyauth which assumes lazydb
         as Db.
         """
-        return cls.easyauth(user, passwd)
+        try:
+            return cls.easyauth(user, passwd)
+        except TypeError:
+            return False
 
     @classmethod
     def register(cls, username, passwd, **kwargs):
@@ -75,7 +78,7 @@ class Academic(User):
                           'uname': u['username'],
                           'email': u['email'],
                           'created': u['created'],
-                          'bio': u['bio']
+                          'bio': u['bio'],
                           })
 
     @classmethod
@@ -150,3 +153,15 @@ class Academic(User):
         else:
             u['posts'].append(pid)
         return User.replace(submitter_name, u)
+
+def get_karma(username):
+    u = User.get(session()['uname'])
+    if u:
+        return u.karma
+    return 0
+
+def has_voted(uname, pid):
+    u = User.get(session()['uname'])
+    if not u:
+        return True
+    return True if int(pid) in u.votes else False
