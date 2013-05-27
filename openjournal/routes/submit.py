@@ -16,7 +16,7 @@ class Submit:
             raise web.seeother('/register')
 
         i = web.input(authors="", url=None, title=None, comments=[],
-                      year=None, enabled=False, subtitle='',
+                      year=None, enabled=True, subtitle='',
                       time=datetime.utcnow(), votes=1,
                       cite={'mla': '', 'apa': '', 'chicago': ''})
         db = Db('db/openjournal')
