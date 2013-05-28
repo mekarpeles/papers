@@ -1,7 +1,11 @@
 #-*- coding: utf-8 -*-
 
 """
+    api.v1.paper
+    ~~~~~~~~~~~~
 
+    :copyright: (c) 2012 by Mek
+    :license: BSD, see LICENSE for more details.
 """
 
 import os
@@ -13,8 +17,8 @@ class Paper(Storage):
 
     def __init__(self, pid, paper=None):
         self.pid = int(pid)
-        paper = paper if paper self.get(self.pid).items()
-        for k, v in paper:
+        paper = paper if paper else self.get(self.pid)        
+        for k, v in paper.items():
             setattr(self, k, v)
     
     def __repr__(self):     
@@ -26,17 +30,18 @@ class Paper(Storage):
 
     @classmethod
     def getall(cls):
-        return cls.db().get('papers')
+        return [Paper(paper['pid'], paper=paper) for \
+                    paper in cls.db().get('papers')]
     
     @classmethod
     def get(cls, pid):
         papers = cls.getall()
-        if pid:
+        if type(pid) is int:
             try:
                 return papers[pid]
             except IndexError as e:
                 raise IndexError("No paper with pid %s. Details: %s" % (pid, e))
-        raise ValueError("Paper.get(pid) invoked with invald or " \
+        raise ValueError("Paper.get(pid) invoked with invalid or " \
                              "non-existing id: %s" % pid)
         
     @staticmethod
@@ -82,38 +87,68 @@ class Paper(Storage):
         """
         return cls.decay(cls.papers())[pid]['score']
 
-    def disable(self):
-        self.enable = False
+    def activate(self, state=True):
+        self.enabled = state
+        return self.save()
 
     def save(self):
         papers = self.getall()
-        papers[self.pid] = self.items()
-        return self.db().puts('papers', papers)
+        papers[self.pid] = dict(self)
+        return self.db().put('papers', papers)
 
-    def add_comment(self, c):
-        if not c.comment: raise ValueError("Comment must be a str with len() > 0")
-        cid = 0 if not self.comments else int(self.comments[-1]['cid'] + 1)
-        self.comments.append(dict(c))
+    def add_comment(self, cid, author, content="", time=None,
+                    votes=0, enabled=True):
+        if not content:
+            raise ValueError("Comment must be a str with len() > 0")
+        cid = 0 if not self.comments else int(self.comments[-1]['cid']) + 1
+        time = time if time else datetime.utcnow().ctime()
+        self.comments.append({'pid': self.pid,
+                              'cid': cid,
+                              'enabled': enabled,
+                              'time': time,
+                              'username': author,
+                              'comment': content,
+                              'edits': []
+                              })
         self.save()
+        return cid
 
-    def edit_comment(self, cid, comment, uname):
-        if not comment: raise ValueError("Comment must be a str with len() > 0")
+    def edit_comment(self, cid, content="", time=None, **comment):
+        """**comment includes
+        """
+        if not content:
+            raise ValueError("Comment must be a str with len() > 0")
         try:
             cid = int(cid)
-        except ValueError as e:
-            raise ValueError(e)
-        c = Comment(comment=comment)
+        except (TypeError, ValueError) as e:            
+            raise # case cid is None or invalid literal w/ base 10
+        time = time if time else datetime.utcnow().ctime()
         for index, comment in enumerate(self.comments):
-            if cid == int(comment['cid']) and \
-                    comment['username'] == uname:
-                paper['comments'][index]['comment'] = i.comment
-                paper['comments'][index]['time'] = i.time
+            if self.comments[index]['cid'] == cid:
+                c = self.comments[cid]
+                if not 'edits' in c:
+                    c['edits'] = [time]
+                else:
+                    c['edits'] += [time]
+                c['comment'] = content
+                c.update(comment)
+                self.comments[cid] = c
         self.save()
 
+    def activate_comment(self, cid, state=True):
+        try:
+            cid = int(cid)
+        except (TypeError, ValueError) as e:            
+            raise # case cid is None or invalid literal w/ base 10
+        for index, comment in enumerate(self.comments):
+            if self.comments[index]['cid'] == cid:
+                self.comments[cid]['enabled'] = state
+        self.save()
+        
 class Comment(Storage):
     def __init__(self, pid, cid, comment=None):
-        comment = comment if comment else self.get(pid, cid).items()
-        for k, v in comment:
+        comment = comment if comment else self.get(pid, cid)
+        for k, v in comment.items():
             setattr(self, k, v)
 
     def edit(self, comment):
@@ -156,7 +191,7 @@ class Comment(Storage):
                                      (pid, cid, e))
             except IndexError as e:
                 raise IndexError("No paper with pid %s. Details: %s" % (pid, e))
-        raise ValueError("Comment.get(pid) invoked with invald or non-existant " \
+        raise ValueError("Comment.get(pid) invoked with invalid or non-existant " \
                              "<pid: %s> or <cid: %s>" % (cid, pid))
 
     def __repr__(self):     

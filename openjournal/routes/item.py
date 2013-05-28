@@ -24,7 +24,6 @@ class Item:
             i.pid = int(i.pid)
             paper = Paper(i.pid)
             if not paper.enabled: raise
-            return paper
         except (TypeError, IndexError):
             raise web.notfound()
 
