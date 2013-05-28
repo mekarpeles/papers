@@ -1,10 +1,11 @@
-from waltz import web, render, session, User
+from waltz import web, render, session
+from api.v1.user import Academic
 
 class Profile:
     def GET(self, username=""): 
         if username:
             try:
-                user = User.get(username, safe=True)
+                user = Academic.get(username, safe=True)
                 return render().profiles.index(user)
             except:
                 pass
