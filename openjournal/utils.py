@@ -1,5 +1,16 @@
+#-*- coding: utf-8 -*-
+
+"""
+    utils.py
+    ~~~~~~~~
+
+    Misc utilities for formatting etc.
+
+    :copyright: (c) 2012 by Mek
+    :license: BSD, see LICENSE for more details.
+"""
+
 from datetime import datetime
-import re
 
 def str2datetime(s, fmt="%a %b %d %H:%M:%S %Y"):
     """Converts str timestamp to datetime"""
@@ -15,39 +26,3 @@ def decayscore(score, t):
     convert time to: hours since submission
     """
     return pow((score - 1) / (t + 2), 1.5)
-
-# Pardon the poor coding style -- below should be moved to api/v1/user
-from waltz import User
-
-def canvote(u, pid):
-    pid = int(pid)
-    return pid not in u['votes']
-
-def record_vote(yourname, submitter_name, pid, cid=None):
-    """XXX Todo: expose as web api/v1/vote and require nonce?"""
-    pid, cid = map(int, (pid, cid))
-    def inc_vote(user):
-        user['votes'].append(pid)
-        return user
-    submitter = User.get(submitter_name)
-    submitter['karma'] +=1
-    User.replace(submitter_name, submitter)
-    return User.update(yourname, func=inc_vote)
-
-def record_submission(submitter_name, pid):
-    """Move to openjoural specific user api.
-    Pushes pid onto user's posts set
-    """
-    pid, cid = map(int, (pid, cid))
-    u = User.get(submitter_name)
-    u['posts'].append(pid)
-    return User.replace(submitter_name, u)
-
-def record_comment(commenter_name, pid, cid):
-    """XXX add karma to comment voting later
-    - you get 1 karma for commenting
-    """
-    pid, cid = map(int, (pid, cid))
-    u = User.get(commenter_name)
-    u['comments'].append((pid, cid))
-    return User.replace(commenter_name, u)
