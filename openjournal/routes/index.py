@@ -1,7 +1,17 @@
+#-*- coding: utf-8 -*-
+"""
+    routes.index
+    ~~~~~~~~~~~~
+
+    Renders assets and handles logic for the homepage
+
+    :copyright: (c) 2012 by Mek
+    :license: BSD, see LICENSE for more details.
+"""
+
 from waltz import web, track, session, render
 from datetime import datetime
 from math import ceil
-from lazydb.lazydb import Db
 from utils import str2datetime, decayscore, minutes_since
 from api.v1.paper import Paper
 
