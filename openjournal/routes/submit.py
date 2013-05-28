@@ -1,8 +1,8 @@
-from waltz import web, render, session, User
+from waltz import web, render, session
 from datetime import datetime
 from lazydb.lazydb import Db
 from api.v1.search import Search
-from utils import record_vote, record_submission
+from api.v1.user import record_vote, record_submission
 
 
 class Submit:
