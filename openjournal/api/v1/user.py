@@ -132,7 +132,7 @@ def inc_karma(user):
 
 def record_vote(votername, submittername, pid, cid=None):
     pid = int(pid)
-    def tally_vote(user):
+    def inc_vote(user):
         """Closure which captures the scope of pid & cid (entity
         ids) and appends them to the voter's list of voted
         entities
