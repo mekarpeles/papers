@@ -1,0 +1,5 @@
+v.0.0.2 Mon 27 May 2013 -- Rambling Research
+- Refactored User API
+- Refactored User API (in parallel to waltz changes)
+- Reimplemented Authentication via routes/auth.py
+- Migrated User utils over to api.v1.user
