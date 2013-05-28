@@ -3,45 +3,46 @@
 """
     item
     ~~~~
+
     Fetching, voting, and commeting on items (journals)
+
+    :copyright: (c) 2012 by Mek
+    :license: BSD, see LICENSE for more details.
 """
 
-from waltz import web, render, session, User
-from datetime import datetime
-from lazydb import Db
-from utils import record_vote, record_comment, canvote
+from waltz import web, render, session
+from api.v1.user import Academic, record_vote, record_comment, canvote
 from api.v1.paper import Paper
 
 class Item:
+
     def GET(self):
         i = web.input(pid=None, cid=None, opt="")
-        if i.pid:
+        option = i.pop('opt')
+
+        try: # getting the requested paper
             i.pid = int(i.pid)
-            try:
-                papers = Paper.getall()
-                paper = Paper(i.pid, paper=papers[i.pid])
-                if i.cid:
-                    i.cid = int(i.cid)
-                    try:
-                        comment = paper['comments'][i.cid]
-                    except:
-                        raise web.notfound()
-                    if not comment['enabled']:
-                        raise web.notfound()
-                    if comment['username'] == session()['uname'] and \
-                            session()['logged']:
-                        if i.opt == "delete":
-                            paper['comments'][i.cid]['enabled'] = False
-                            papers[i.pid] = paper
-                            db.put('papers', papers)
-                            return render().item(i.pid, paper)
-                        if i.opt == "edit":
-                            return render().edit(i.pid, i.cid, comment)
-                    return render().comment(i.pid, i.cid, comment)
-                return render().item(i.pid, paper)
-            except IndexError:
-                return "No such item exists, id out of range"
-        raise web.seeother('/')
+            paper = Paper(i.pid)
+            if not paper.enabled: raise
+            return paper
+        except (TypeError, IndexError):
+            raise web.notfound()
+
+        try: # getting the specified comment
+            i.cid = int(i.cid)
+            comment = paper.comments[i.cid]
+            if not comment['enabled']:
+                raise IndexError
+        except (TypeError, IndexError):
+            return render().item(paper)
+
+        if option and comment['username'] == session()['uname'] \
+                and session()['logged']: # TODO: or session()['admin']
+            if option == "delete":
+                paper.activate_comment(i.cid, state=False)
+                return render().item(paper)
+            if option == "edit": return render().edit(i.pid, i.cid, comment)
+        return render().comment(i.pid, i.cid, comment)
 
     def POST(self):
         """Organize/sort the comments according to votes, author,
@@ -51,42 +52,56 @@ class Item:
         side effects:
         - handles votes / karma
         """
-        i = web.input(pid=None, cid=None, time=datetime.utcnow().ctime(),
-                      comment="", votes=0, enabled=True, opt="")
-        option = i.pop(opt)
-        if i.comment and i.pid:
+        i = web.input(pid=None, cid=None, comment="", opt="", enabled=True)
+        option = i.pop('opt')
+
+        try: # getting the requested paper
             i.pid = int(i.pid)
+            paper = Paper(i.pid)
+        except (TypeError, IndexError):
+            # TODO: Log
+            # IndexEror("No such paper") or 
+            # TypeError("int() arg must be str or number, not 'NoneType'")
+            raise web.notfound()
 
-            if not session().logged:
-                raise web.seeother('/login?redir=/item?pid=%s' % i.pid)
+        if not i.comment:
+            return render().item(paper)
+
+        if not session().logged:
+            raise web.seeother('/login?redir=/item?pid=%s' % i.pid)
+        else:
+            i.username = session()['uname']
+
+        if option == "edit":
             try:
-                papers = Paper.getall()
-                paper = Paper(i.pid, paper=papers[i.pid])
-            except IndexError:
-                # TODO: Log IndexEror("No such paper")
-                raise web.seeother('/')
+                paper.edit_comment(i.cid, content=i.comment, enabled=i.enabled)
+                
+            except (TypeError, ValueError) as e:
+                # XXX Log error e
+                return render().item(paper)
+        else:
+            i.cid = paper.add_comment(i.cid, session()['uname'], content=i.comment,
+                              votes=paper.votes, enabled=i.enabled)
+            record_comment(session()['uname'], i.pid, i.cid)
+        return render().item(paper)
 
-            if i.cid:
-                if option == "edit":
-                    try:
-                        paper.edit_comment(i.cid, i.comment,
-                                           uname=session()['uname'])
-                    except ValueError:
-                        return render().item(i.pid, paper)
-                else:
-                    paper.add_comment(i.cid, i)
-                    record_comment(session()['uname'], i.pid, i.cid)
-
-                return render().item(i.pid, paper)
-        raise web.seeother('/')
 
     @staticmethod
     def clear(pid):
         """Clear comments for an item"""
-        db = Db('db/openjournal')
-        papers = db.get('papers')
-        papers[pid]['comments'] = []
-        return db.put('papers', papers)
+        paper = Paper(pid)
+        paper.comments = []
+        return paper.save()
+
+class Comment:
+    def GET(self):
+        """Item().POST() should be refactored into Comment,
+        routes.submit should be refactored into Item().POST()
+        """
+        pass
+
+    def POST(self):
+        pass
 
 class Vote:
     def GET(self):
@@ -107,23 +122,21 @@ class Vote:
         - calc unique vote id via some linear combination of paper pid
           (and or comment id [cid], if it exists)
         """
-        msg = None
         i = web.input(pid=None, sort="popular")
         
         if not session().logged:
             raise web.seeother('/register')
-        db = Db('db/openjournal')
-        ps = db.get('papers')
-        u = User.get(session()['uname'])
+
         if i.pid:
             i.pid = int(i.pid)
+            u = Academic(session()['uname'])
+            p = Paper(i.pid)
             if canvote(u, i.pid):
                 try:
-                    ps[i.pid]['votes'] += 1
-                    db.put('papers', ps)
-                    submitter_uname = ps[i.pid]['submitter']
-                    record_vote(u['username'], submitter_uname, i.pid)
+                    # move set_vote to paper api
+                    p.votes += 1
+                    p.save()                    
+                    record_vote(u['username'], p.submitter, i.pid)
                 except IndexError:
                     return "No such items exists to vote on"
         raise web.seeother('/?sort=%s' % i.sort)
-
