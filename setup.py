@@ -27,6 +27,7 @@ setup(
         'lepl >= 5.1.3',
         'whoosh >= 2.4.1',
         'requests >= 1.1.0',
+        'pyopenssl',
         'pypdf',
         'markdown'
     ],
