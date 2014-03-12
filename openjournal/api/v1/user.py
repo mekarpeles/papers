@@ -16,12 +16,20 @@ from waltz import User, session
 from waltz.utils import Storage
 from waltz.security import username_regex, passwd_regex
 
+MIN_USERNAME_LEN = 2
+MAX_USERNAME_LEN = 16
+MIN_PASSWD_LEN = 4
+MAX_PASSWD_LEN = 32
 USERNAME_LEN = 2
 PASSWD_LEN = 6
 USERNAME_VALID = ""
 PASSWD_VALID = '!@#$%^&+=_'
-USERNAME_RE = username_regex % (USERNAME_VALID, USERNAME_LEN)
-PASSWD_RE = passwd_regex % (PASSWD_VALID, PASSWD_LEN)
+USERNAME_RE = username_regex % (USERNAME_VALID,
+                                MIN_USERNAME_LEN,
+                                MAX_USERNAME_LEN)
+PASSWD_RE = passwd_regex % (PASSWD_VALID,
+                            MIN_PASSWD_LEN,
+                            MAX_PASSWD_LEN)
 
 AUTH_ERR = {"malformed_creds": "Password must be at least %s " \
            "characters long and only contains numbers, letters, " \
