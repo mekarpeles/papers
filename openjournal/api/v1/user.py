@@ -14,21 +14,22 @@ import re
 from datetime import datetime
 from waltz import User, session
 from waltz.utils import Storage
-from waltz.security import username_regex, passwd_regex
+from waltz.security import username_regex
 
-USERNAME_LEN = 2
-PASSWD_LEN = 6
-USERNAME_VALID = ""
-PASSWD_VALID = '!@#$%^&+=_'
-USERNAME_RE = username_regex % (USERNAME_VALID, USERNAME_LEN)
-PASSWD_RE = passwd_regex % (PASSWD_VALID, PASSWD_LEN)
+MIN_USERNAME_LEN = 2
+MAX_USERNAME_LEN = 32
+MIN_PASSWORD_LEN = 4
+MAX_PASSWORD_LEN = 256
+USERNAME_VALID = "|.!\-_"
+USERNAME_RE = username_regex % (USERNAME_VALID,
+                                MIN_USERNAME_LEN,
+                                MAX_USERNAME_LEN)
+PASSWORD_RE = "^.{%s,%s}$" % (MIN_PASSWORD_LEN, MAX_PASSWORD_LEN)
 
 AUTH_ERR = {"malformed_creds": "Password must be at least %s " \
-           "characters long and only contains numbers, letters, " \
-           "or any of the following special characters: %s. " \
-           "Please make sure your username is at least %s " \
+           "characters long. Please make sure your username is at least %s " \
            "characters long and only contains numbers, " \
-           "letters, or underscores." % (PASSWD_LEN, PASSWD_VALID, USERNAME_LEN),
+           "letters, or underscores." % (MIN_PASSWORD_LEN, MIN_USERNAME_LEN),
        "wrong_creds": "Incorrect username or password",
        "already_registered": "Sorry, username already registered"
        }

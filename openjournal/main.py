@@ -1,4 +1,6 @@
+#!/usr/bin/env python
 #-*- coding: utf-8 -*-
+
 """
     main.py
     ~~~~~~~
@@ -45,6 +47,7 @@ sessions = SESSION_DEFAULTS
 ssl = server['ssl'] if all(server['ssl']) else None
 app = waltz.setup.dancefloor(urls, globals(), env=env, sessions=sessions,
                              db='%s/db/waltz' % os.getcwd(), ssl=ssl,
+                             fcgi=server['type'], debug=server['debug'],
                              autoreload=False)
 
 if __name__ == "__main__":

@@ -26,5 +26,7 @@ config.read('%s/oj.cfg' % path)
 config.getdef = types.MethodType(getdef, config)
 
 server = {'ssl': (config.getdef('ssl', 'cert', ''),
-                  config.getdef('ssl', 'key', ''))
+                  config.getdef('ssl', 'key', '')),
+          'type': config.getdef('server', 'type', False),
+          'debug': bool(int(config.getdef('server', 'debug', False)))
           }
