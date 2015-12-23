@@ -3,7 +3,7 @@
 ![Build Status](https://travis-ci.org/mekarpeles/openjournal.png)
 
 
-**Papers** is an reddit/HackerNews-like interface fir sharing, discussing, collaborating on and improving academic papers.
+**Papers** is an reddit/HackerNews-like interface for sharing, discussing, collaborating on and improving academic papers.
 
 ## Installation
 
