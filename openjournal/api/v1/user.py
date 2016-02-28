@@ -91,14 +91,14 @@ class Academic(User):
         if not (username and passwd):
             return False
         if not (re.match(USERNAME_RE, username) and \
-                    re.match(PASSWD_RE, passwd)):
+                    re.match(PASSWORD_RE, passwd)):
             return False
         return True
 
     @classmethod
     def register(cls, username, passwd, **kwargs):
         if re.match(USERNAME_RE, username):
-            if re.match(PASSWD_RE, passwd):
+            if re.match(PASSWORD_RE, passwd):
                 try:
                     u = User.register(username, passwd, **kwargs)
                     return cls(u.username, user=u)
